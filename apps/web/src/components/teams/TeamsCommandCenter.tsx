@@ -1,10 +1,11 @@
-import { useCallback } from "react";
-import { Plus } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Network, Plus } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { useTeamsStore } from "~/teamsStore";
 import { TeammateCard } from "./TeammateCard";
 import { ActivityFeed } from "./ActivityFeed";
 import { TeamsToggle } from "./TeamsToggle";
+import { CoordinatorDashboard } from "~/components/coordinator/CoordinatorDashboard";
 
 // ── Component ────────────────────────────────────────────────────────
 
@@ -26,6 +27,7 @@ export function TeamsCommandCenter({
   const teammates = useTeamsStore((s) => s.teammates);
   const activityFeed = useTeamsStore((s) => s.activityFeed);
   const removeTeammate = useTeamsStore((s) => s.removeTeammate);
+  const [showCoordinator, setShowCoordinator] = useState(false);
 
   const handleRemove = useCallback(
     (teammateId: string) => {
@@ -33,6 +35,28 @@ export function TeamsCommandCenter({
     },
     [removeTeammate],
   );
+
+  if (showCoordinator) {
+    return (
+      <div className={cn("flex h-full flex-col overflow-hidden", className)}>
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setShowCoordinator(false)}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Command Center
+            </button>
+            <span className="text-muted-foreground/40">/</span>
+            <h2 className="text-sm font-semibold text-foreground">Coordinator</h2>
+          </div>
+          <TeamsToggle />
+        </div>
+        <CoordinatorDashboard className="flex-1" />
+      </div>
+    );
+  }
 
   return (
     <div className={cn("flex h-full flex-col overflow-hidden", className)}>
@@ -43,6 +67,19 @@ export function TeamsCommandCenter({
           <span className="text-xs text-muted-foreground">
             {teammates.length} agent{teammates.length !== 1 ? "s" : ""}
           </span>
+          <button
+            type="button"
+            onClick={() => setShowCoordinator(true)}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1",
+              "text-[0.6875rem] font-medium text-muted-foreground",
+              "transition-colors hover:bg-accent hover:text-foreground",
+            )}
+            aria-label="Open Coordinator Dashboard"
+          >
+            <Network className="size-3" />
+            Coordinator
+          </button>
         </div>
         <TeamsToggle />
       </div>

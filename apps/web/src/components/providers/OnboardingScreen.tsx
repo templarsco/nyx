@@ -266,24 +266,47 @@ function OnboardingScreen() {
         </div>
         <ChevronRightIcon className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
       </button>
+
+      {/* Skip — use defaults */}
+      <div className="flex flex-col items-center gap-1 pt-2">
+        <button
+          type="button"
+          className="text-sm text-muted-foreground transition-colors hover:text-foreground outline-none focus-visible:underline"
+          onClick={() => completeOnboarding()}
+        >
+          Skip &mdash; use Claude &amp; Codex defaults
+        </button>
+        <span className="text-[11px] text-muted-foreground/60">
+          You can configure providers later in Settings
+        </span>
+      </div>
     </div>
   );
 
   const renderConfigureStep = () => (
     <div className="flex w-full max-w-lg flex-col gap-5">
-      {/* Back link */}
-      <button
-        type="button"
-        className="inline-flex items-center gap-1 self-start text-xs text-muted-foreground transition-colors hover:text-foreground outline-none focus-visible:underline"
-        onClick={() => {
-          setStep("choose");
-          setConnectionState("idle");
-          setConnectionError(null);
-        }}
-      >
-        <ChevronRightIcon className="size-3 rotate-180" />
-        Back
-      </button>
+      {/* Back + Skip links */}
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground outline-none focus-visible:underline"
+          onClick={() => {
+            setStep("choose");
+            setConnectionState("idle");
+            setConnectionError(null);
+          }}
+        >
+          <ChevronRightIcon className="size-3 rotate-180" />
+          Back
+        </button>
+        <button
+          type="button"
+          className="text-xs text-muted-foreground transition-colors hover:text-foreground outline-none focus-visible:underline"
+          onClick={() => completeOnboarding()}
+        >
+          Skip setup
+        </button>
+      </div>
 
       {/* Advanced: provider type selector */}
       {selectedPath === "advanced" && (

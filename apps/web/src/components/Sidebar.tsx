@@ -1,6 +1,7 @@
 import {
   ArchiveIcon,
   ArrowUpDownIcon,
+  BotIcon,
   ChevronRightIcon,
   FolderIcon,
   GitPullRequestIcon,
@@ -9,6 +10,7 @@ import {
   SquarePenIcon,
   TerminalIcon,
   TriangleAlertIcon,
+  XIcon,
 } from "lucide-react";
 import { ProjectFavicon } from "./ProjectFavicon";
 import { autoAnimate } from "@formkit/auto-animate";
@@ -93,6 +95,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenuAction,
   SidebarMenu,
@@ -124,10 +127,14 @@ import {
 } from "./Sidebar.logic";
 import { SidebarUpdatePill } from "./sidebar/SidebarUpdatePill";
 import { ProviderHealthIndicator } from "./providers/ProviderHealthIndicator";
+import { KairosStatusIndicator } from "./kairos/KairosStatusIndicator";
+import { KairosPanel } from "./kairos/KairosPanel";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { useSettings, useUpdateSettings } from "~/hooks/useSettings";
 import { useServerKeybindings } from "../rpc/serverState";
 import { useSidebarThreadSummaryById } from "../storeSelectors";
+import { useTeamsStore } from "../teamsStore";
+import { useWorkspaceStore } from "../workspaceStore";
 import type { Project } from "../types";
 const THREAD_PREVIEW_LIMIT = 6;
 const SIDEBAR_SORT_LABELS: Record<SidebarProjectSortOrder, string> = {
@@ -541,9 +548,9 @@ function SidebarThreadRow(props: SidebarThreadRowProps) {
 function NyxWordmark() {
   return (
     <svg
-      aria-label="NYX"
+      aria-label="Nyx"
       className="h-3 w-auto shrink-0"
-      viewBox="0 0 72 24"
+      viewBox="0 0 48 24"
       xmlns="http://www.w3.org/2000/svg"
     >
       {/* N */}
@@ -552,15 +559,9 @@ function NyxWordmark() {
         fill="currentColor"
         className="text-foreground"
       />
-      {/* Y */}
-      <path
-        d="M22 4l5 7.6L32 4h4l-7.2 10.8V20h-3.6v-5.2L18 4h4Z"
-        fill="currentColor"
-        className="text-foreground"
-      />
       {/* X */}
       <path
-        d="M38 4h4l4.8 6.8L51.6 4h4L49 13l7 7h-4.2l-5-7.2L41.6 20H37.4l7-7L38 4Z"
+        d="M22 4h4l4.8 6.8L35.6 4h4L33 13l7 7h-4.2l-5-7.2L25.6 20H21.4l7-7L22 4Z"
         fill="currentColor"
         className="text-foreground"
       />
@@ -731,6 +732,13 @@ export default function Sidebar() {
   const suppressProjectClickAfterDragRef = useRef(false);
   const suppressProjectClickForContextMenuRef = useRef(false);
   const [desktopUpdateState, setDesktopUpdateState] = useState<DesktopUpdateState | null>(null);
+  const [kairosPanelOpen, setKairosPanelOpen] = useState(false);
+  const teammates = useTeamsStore((s) => s.teammates);
+  const freeTerminals = useWorkspaceStore((s) => s.freeTerminals);
+  const freeTerminalSectionExpanded = useWorkspaceStore((s) => s.freeTerminalSectionExpanded);
+  const setFreeTerminalSectionExpanded = useWorkspaceStore((s) => s.setFreeTerminalSectionExpanded);
+  const addFreeTerminal = useWorkspaceStore((s) => s.addFreeTerminal);
+  const removeFreeTerminal = useWorkspaceStore((s) => s.removeFreeTerminal);
   const selectedThreadIds = useThreadSelectionStore((s) => s.selectedThreadIds);
   const toggleThreadSelection = useThreadSelectionStore((s) => s.toggleThread);
   const rangeSelectTo = useThreadSelectionStore((s) => s.rangeSelectTo);
@@ -2177,12 +2185,101 @@ export default function Sidebar() {
                 </div>
               )}
             </SidebarGroup>
+
+            {/* ── Agents section ─────────────────────────────────── */}
+            {teammates.length > 0 && (
+              <SidebarGroup className="px-2 py-2">
+                <SidebarGroupLabel className="mb-1 px-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
+                  Agents
+                </SidebarGroupLabel>
+                <SidebarMenu>
+                  {teammates.map((teammate) => {
+                    const dotColor =
+                      teammate.status === "coding"
+                        ? "bg-emerald-500"
+                        : teammate.status === "waiting"
+                          ? "bg-amber-500"
+                          : teammate.status === "error"
+                            ? "bg-red-500"
+                            : teammate.status === "completed"
+                              ? "bg-blue-500"
+                              : "bg-gray-400";
+                    return (
+                      <SidebarMenuItem key={teammate.id}>
+                        <SidebarMenuButton size="sm" className="gap-2 px-2 py-1.5">
+                          <BotIcon className="size-3.5 text-primary" />
+                          <span className="flex-1 truncate text-xs">{teammate.name}</span>
+                          <span
+                            className={`size-1.5 shrink-0 rounded-full ${dotColor} ${teammate.status === "coding" || teammate.status === "waiting" ? "animate-pulse" : ""}`}
+                          />
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroup>
+            )}
+
+            {/* ── Terminals section ──────────────────────────────── */}
+            <SidebarGroup className="px-2 py-2">
+              <div className="mb-1 flex items-center justify-between pl-2 pr-1.5">
+                <button
+                  type="button"
+                  className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60 hover:text-muted-foreground"
+                  onClick={() => setFreeTerminalSectionExpanded(!freeTerminalSectionExpanded)}
+                >
+                  Terminals
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md p-0.5 text-muted-foreground/60 hover:bg-accent hover:text-foreground"
+                  onClick={() => addFreeTerminal()}
+                  title="Add terminal"
+                >
+                  <PlusIcon className="size-3" />
+                </button>
+              </div>
+              {freeTerminalSectionExpanded && freeTerminals.length > 0 && (
+                <SidebarMenu>
+                  {freeTerminals.map((terminal) => (
+                    <SidebarMenuItem key={terminal.id}>
+                      <SidebarMenuButton size="sm" className="gap-2 px-2 py-1.5">
+                        <TerminalIcon className="size-3.5" />
+                        <span className="flex-1 truncate text-xs">{terminal.name}</span>
+                      </SidebarMenuButton>
+                      <SidebarMenuAction
+                        className="text-muted-foreground/60 hover:text-foreground"
+                        onClick={() => removeFreeTerminal(terminal.id)}
+                        aria-label="Remove terminal"
+                      >
+                        <XIcon className="size-3" />
+                      </SidebarMenuAction>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              )}
+              {freeTerminalSectionExpanded && freeTerminals.length === 0 && (
+                <div className="px-2 py-2 text-center text-xs text-muted-foreground/60">
+                  No free terminals
+                </div>
+              )}
+            </SidebarGroup>
           </SidebarContent>
 
           <SidebarSeparator />
           <SidebarFooter className="p-2">
             <SidebarUpdatePill />
-            <ProviderHealthIndicator onOpenSettings={() => void navigate({ to: "/settings" })} />
+            <div className="flex items-center gap-1.5">
+              <ProviderHealthIndicator onOpenSettings={() => void navigate({ to: "/settings" })} />
+              <div className="relative">
+                <KairosStatusIndicator onClick={() => setKairosPanelOpen((prev) => !prev)} />
+                {kairosPanelOpen && (
+                  <div className="absolute bottom-full right-0 z-50 mb-2">
+                    <KairosPanel onClose={() => setKairosPanelOpen(false)} />
+                  </div>
+                )}
+              </div>
+            </div>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton

@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useHandleNewThread } from "../hooks/useHandleNewThread";
 import { isTerminalFocused } from "../lib/terminalFocus";
@@ -9,6 +9,10 @@ import { useThreadSelectionStore } from "../threadSelectionStore";
 import { resolveSidebarNewThreadEnvMode } from "~/components/Sidebar.logic";
 import { useSettings } from "~/hooks/useSettings";
 import { useServerKeybindings } from "~/rpc/serverState";
+import { useTeamsStore } from "~/teamsStore";
+import { TeamsToggle } from "~/components/teams/TeamsToggle";
+import { TeamsCommandCenter } from "~/components/teams/TeamsCommandCenter";
+import { TeamsSplitView } from "~/components/teams/TeamsSplitView";
 
 function ChatRouteGlobalShortcuts() {
   const clearSelection = useThreadSelectionStore((state) => state.clearSelection);
@@ -87,10 +91,41 @@ function ChatRouteGlobalShortcuts() {
 }
 
 function ChatRouteLayout() {
+  const viewMode = useTeamsStore((s) => s.viewMode);
+  const [teamsOpen, setTeamsOpen] = useState(false);
+
+  // Keyboard shortcut: Ctrl+Shift+T toggles teams overlay
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === "t") {
+        event.preventDefault();
+        setTeamsOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   return (
     <>
       <ChatRouteGlobalShortcuts />
-      <Outlet />
+      {/* Floating Teams toggle */}
+      <div className="pointer-events-none fixed bottom-4 right-4 z-40 flex items-center gap-2">
+        <div className="pointer-events-auto">
+          <TeamsToggle className={teamsOpen ? "ring-2 ring-primary/40" : ""} />
+        </div>
+      </div>
+      {teamsOpen ? (
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col bg-background text-foreground">
+          {viewMode === "center" ? (
+            <TeamsCommandCenter className="flex-1" />
+          ) : (
+            <TeamsSplitView className="flex-1" />
+          )}
+        </div>
+      ) : (
+        <Outlet />
+      )}
     </>
   );
 }

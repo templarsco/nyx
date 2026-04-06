@@ -26,6 +26,7 @@ import {
 } from "../components/WebSocketConnectionSurface";
 import { Button } from "../components/ui/button";
 import { AnchoredToastProvider, ToastProvider, toastManager } from "../components/ui/toast";
+import { KairosEngine } from "../components/kairos/KairosEngine";
 import { resolveAndPersistPreferredEditor } from "../editorPreferences";
 import { readNativeApi } from "../nativeApi";
 import {
@@ -87,6 +88,7 @@ function RootRouteView() {
       <AnchoredToastProvider>
         <NotificationProvider>
           <ServerStateBootstrap />
+          <KairosEngine />
           <EventRouter />
           <WebSocketConnectionCoordinator />
           <SlowRpcAckToastCoordinator />

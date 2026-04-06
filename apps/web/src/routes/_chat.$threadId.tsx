@@ -1,6 +1,7 @@
 import { ThreadId } from "@nyx/contracts";
 import { createFileRoute, retainSearchParams, useNavigate } from "@tanstack/react-router";
 import { Suspense, lazy, type ReactNode, useCallback, useEffect, useState } from "react";
+import { Globe } from "lucide-react";
 
 import ChatView from "../components/ChatView";
 import { DiffWorkerPoolProvider } from "../components/DiffWorkerPoolProvider";
@@ -10,6 +11,9 @@ import {
   DiffPanelShell,
   type DiffPanelMode,
 } from "../components/DiffPanelShell";
+import { BrowserPane, BrowserPanePlaceholder } from "../components/browser/BrowserPane";
+import { BrowserToolbar } from "../components/browser/BrowserToolbar";
+import { useBrowserStore } from "../browserStore";
 import { useComposerDraftStore } from "../composerDraftStore";
 import {
   type DiffRouteSearch,
@@ -160,6 +164,27 @@ const DiffPanelInlineSidebar = (props: {
   );
 };
 
+/**
+ * Browser split panel that appears alongside the chat/terminal area.
+ * Toggled via Ctrl+Shift+B or the floating browser button.
+ */
+function BrowserSplitPanel() {
+  const panes = useBrowserStore((s) => s.panes);
+  const activePaneId = useBrowserStore((s) => s.activePaneId);
+  const openPane = useBrowserStore((s) => s.openPane);
+
+  if (panes.length === 0) {
+    return <BrowserPanePlaceholder className="h-full min-w-[320px]" />;
+  }
+
+  return (
+    <div className="flex h-full min-w-[320px] flex-col border-l border-border bg-background">
+      <BrowserToolbar />
+      {activePaneId && <BrowserPane paneId={activePaneId} className="flex-1" />}
+    </div>
+  );
+}
+
 function ChatThreadRouteView() {
   const bootstrapComplete = useStore((store) => store.bootstrapComplete);
   const navigate = useNavigate();
@@ -177,6 +202,9 @@ function ChatThreadRouteView() {
   // TanStack Router keeps active route components mounted across param-only navigations
   // unless remountDeps are configured, so this stays warm across thread switches.
   const [hasOpenedDiff, setHasOpenedDiff] = useState(diffOpen);
+  const [browserOpen, setBrowserOpen] = useState(false);
+  const openPane = useBrowserStore((s) => s.openPane);
+
   const closeDiff = useCallback(() => {
     void navigate({
       to: "/$threadId",
@@ -194,6 +222,31 @@ function ChatThreadRouteView() {
       },
     });
   }, [navigate, threadId]);
+
+  const toggleBrowser = useCallback(() => {
+    setBrowserOpen((prev) => {
+      if (!prev) {
+        // Ensure at least one pane is open when toggling on
+        const state = useBrowserStore.getState();
+        if (state.panes.length === 0) {
+          openPane();
+        }
+      }
+      return !prev;
+    });
+  }, [openPane]);
+
+  // Keyboard shortcut: Ctrl+Shift+B toggles browser pane
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === "b") {
+        event.preventDefault();
+        toggleBrowser();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [toggleBrowser]);
 
   useEffect(() => {
     if (diffOpen) {
@@ -218,11 +271,33 @@ function ChatThreadRouteView() {
 
   const shouldRenderDiffContent = diffOpen || hasOpenedDiff;
 
+  // Floating browser toggle button
+  const browserToggleButton = (
+    <button
+      type="button"
+      onClick={toggleBrowser}
+      className={`pointer-events-auto fixed bottom-4 right-48 z-40 inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card px-2.5 py-1.5 text-xs font-medium shadow-xs/5 transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${browserOpen ? "text-primary ring-2 ring-primary/40" : "text-muted-foreground"}`}
+      aria-label={browserOpen ? "Close browser pane" : "Open browser pane"}
+    >
+      <Globe className="size-3.5" />
+      <span>{browserOpen ? "Close" : "Browser"}</span>
+      <kbd className="hidden items-center gap-0.5 rounded border border-border/60 bg-muted px-1 py-0.5 font-mono text-[0.5625rem] text-muted-foreground/60 sm:inline-flex">
+        Ctrl+Shift+B
+      </kbd>
+    </button>
+  );
+
   if (!shouldUseDiffSheet) {
     return (
       <>
-        <SidebarInset className="h-dvh  min-h-0 overflow-hidden overscroll-y-none bg-background text-foreground">
-          <ChatView threadId={threadId} />
+        {browserToggleButton}
+        <SidebarInset className="h-dvh min-h-0 overflow-hidden overscroll-y-none bg-background text-foreground">
+          <div className="flex h-full">
+            <div className="flex-1 overflow-hidden">
+              <ChatView threadId={threadId} />
+            </div>
+            {browserOpen && <BrowserSplitPanel />}
+          </div>
         </SidebarInset>
         <DiffPanelInlineSidebar
           diffOpen={diffOpen}
@@ -236,8 +311,14 @@ function ChatThreadRouteView() {
 
   return (
     <>
+      {browserToggleButton}
       <SidebarInset className="h-dvh min-h-0 overflow-hidden overscroll-y-none bg-background text-foreground">
-        <ChatView threadId={threadId} />
+        <div className="flex h-full">
+          <div className="flex-1 overflow-hidden">
+            <ChatView threadId={threadId} />
+          </div>
+          {browserOpen && <BrowserSplitPanel />}
+        </div>
       </SidebarInset>
       <DiffPanelSheet diffOpen={diffOpen} onCloseDiff={closeDiff}>
         {shouldRenderDiffContent ? <LazyDiffPanel mode="sheet" /> : null}
