@@ -16,6 +16,9 @@ import { Throttler } from "@tanstack/react-pacer";
 
 import { APP_DISPLAY_NAME } from "../branding";
 import { AppSidebarLayout } from "../components/AppSidebarLayout";
+import { NotificationProvider } from "../components/notifications/NotificationProvider";
+import { OnboardingScreen } from "../components/providers/OnboardingScreen";
+import { useProviderStore } from "../providerStore";
 import {
   SlowRpcAckToastCoordinator,
   WebSocketConnectionCoordinator,
@@ -73,18 +76,26 @@ function RootRouteView() {
     );
   }
 
+  const onboardingComplete = useProviderStore((s) => s.onboardingComplete);
+
+  if (!onboardingComplete) {
+    return <OnboardingScreen />;
+  }
+
   return (
     <ToastProvider>
       <AnchoredToastProvider>
-        <ServerStateBootstrap />
-        <EventRouter />
-        <WebSocketConnectionCoordinator />
-        <SlowRpcAckToastCoordinator />
-        <WebSocketConnectionSurface>
-          <AppSidebarLayout>
-            <Outlet />
-          </AppSidebarLayout>
-        </WebSocketConnectionSurface>
+        <NotificationProvider>
+          <ServerStateBootstrap />
+          <EventRouter />
+          <WebSocketConnectionCoordinator />
+          <SlowRpcAckToastCoordinator />
+          <WebSocketConnectionSurface>
+            <AppSidebarLayout>
+              <Outlet />
+            </AppSidebarLayout>
+          </WebSocketConnectionSurface>
+        </NotificationProvider>
       </AnchoredToastProvider>
     </ToastProvider>
   );

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./components/notifications/notificationRing.css";
 
 @custom-variant dark (&:is(.dark, .dark *));
 

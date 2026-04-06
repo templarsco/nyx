@@ -123,6 +123,7 @@ import {
   useThreadJumpHintVisibility,
 } from "./Sidebar.logic";
 import { SidebarUpdatePill } from "./sidebar/SidebarUpdatePill";
+import { ProviderHealthIndicator } from "./providers/ProviderHealthIndicator";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { useSettings, useUpdateSettings } from "~/hooks/useSettings";
 import { useServerKeybindings } from "../rpc/serverState";
@@ -2181,6 +2182,7 @@ export default function Sidebar() {
           <SidebarSeparator />
           <SidebarFooter className="p-2">
             <SidebarUpdatePill />
+            <ProviderHealthIndicator onOpenSettings={() => void navigate({ to: "/settings" })} />
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
