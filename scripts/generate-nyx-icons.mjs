@@ -28,31 +28,26 @@ function generateSvgLogo(size = 128, isDev = false) {
   const bg = isDev ? "#0a0f23" : "#0f0a1e";
   const cornerR = (size * 0.078).toFixed(2);
 
-  // Bold geometric NYX lettermark
-  // Letters are designed on a grid proportional to the icon size
-  // Each letter occupies roughly 1/3 of the horizontal space
-  const m = size; // shorthand
-  const pad = m * 0.15; // padding from edges
-  const letterW = (m - pad * 2) * 0.3; // width per letter
-  const gap = (m - pad * 2) * 0.05; // gap between letters
-  const top = m * 0.28; // top of letters
-  const bot = m * 0.72; // bottom of letters
-  const sw = (m * 0.065).toFixed(2); // stroke width
-  const lx0 = pad; // start of N
-  const lx1 = lx0 + letterW + gap; // start of Y
-  const lx2 = lx1 + letterW + gap; // start of X
+  // Bold geometric NX monogram
+  // Two letters split the horizontal space evenly
+  const m = size;
+  const pad = m * 0.15;
+  const letterW = (m - pad * 2) * 0.42;
+  const gap = (m - pad * 2) * 0.16;
+  const top = m * 0.28;
+  const bot = m * 0.72;
+  const sw = (m * 0.075).toFixed(2);
+  const lx0 = pad;
+  const lx1 = lx0 + letterW + gap;
 
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="${size}" height="${size}" rx="${cornerR}" fill="${bg}"/>
   <g stroke="${accent}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" fill="none">
     <!-- N -->
     <polyline points="${lx0.toFixed(1)},${bot.toFixed(1)} ${lx0.toFixed(1)},${top.toFixed(1)} ${(lx0 + letterW).toFixed(1)},${bot.toFixed(1)} ${(lx0 + letterW).toFixed(1)},${top.toFixed(1)}"/>
-    <!-- Y -->
-    <polyline points="${lx1.toFixed(1)},${top.toFixed(1)} ${(lx1 + letterW / 2).toFixed(1)},${((top + bot) / 2).toFixed(1)} ${(lx1 + letterW).toFixed(1)},${top.toFixed(1)}"/>
-    <line x1="${(lx1 + letterW / 2).toFixed(1)}" y1="${((top + bot) / 2).toFixed(1)}" x2="${(lx1 + letterW / 2).toFixed(1)}" y2="${bot.toFixed(1)}"/>
     <!-- X -->
-    <line x1="${lx2.toFixed(1)}" y1="${top.toFixed(1)}" x2="${(lx2 + letterW).toFixed(1)}" y2="${bot.toFixed(1)}"/>
-    <line x1="${(lx2 + letterW).toFixed(1)}" y1="${top.toFixed(1)}" x2="${lx2.toFixed(1)}" y2="${bot.toFixed(1)}"/>
+    <line x1="${lx1.toFixed(1)}" y1="${top.toFixed(1)}" x2="${(lx1 + letterW).toFixed(1)}" y2="${bot.toFixed(1)}"/>
+    <line x1="${(lx1 + letterW).toFixed(1)}" y1="${top.toFixed(1)}" x2="${lx1.toFixed(1)}" y2="${bot.toFixed(1)}"/>
   </g>
 </svg>`;
 }
@@ -182,29 +177,15 @@ function renderIcon(size, isDev = false) {
   const bot = size * 0.72;
   const letterH = bot - top;
 
-  if (size <= 16) {
-    // At 16x16, draw "NX" monogram for legibility
-    const totalW = size - pad * 2;
-    const letterW = totalW * 0.42;
-    const gap = totalW * 0.16;
-    const thickness = Math.max(1.2, size * 0.1);
-    const lx0 = pad;
-    const lx1 = lx0 + letterW + gap;
-    drawN(buf, size, lx0, top, letterW, letterH, thickness, accent, bg);
-    drawX(buf, size, lx1, top, letterW, letterH, thickness, accent, bg);
-  } else {
-    // 32+ sizes: full "NYX"
-    const totalW = size - pad * 2;
-    const letterW = totalW * 0.28;
-    const gap = totalW * 0.08;
-    const thickness = Math.max(1.5, size * 0.065);
-    const lx0 = pad;
-    const lx1 = lx0 + letterW + gap;
-    const lx2 = lx1 + letterW + gap;
-    drawN(buf, size, lx0, top, letterW, letterH, thickness, accent, bg);
-    drawY(buf, size, lx1, top, letterW, letterH, thickness, accent, bg);
-    drawX(buf, size, lx2, top, letterW, letterH, thickness, accent, bg);
-  }
+  // Always draw "NX" monogram — clean and legible at all sizes
+  const totalW = size - pad * 2;
+  const letterW = totalW * 0.42;
+  const gap = totalW * 0.16;
+  const thickness = size <= 16 ? Math.max(1.2, size * 0.1) : Math.max(1.5, size * 0.075);
+  const lx0 = pad;
+  const lx1 = lx0 + letterW + gap;
+  drawN(buf, size, lx0, top, letterW, letterH, thickness, accent, bg);
+  drawX(buf, size, lx1, top, letterW, letterH, thickness, accent, bg);
 
   return buf;
 }

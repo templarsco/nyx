@@ -1,13 +1,10 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="128" height="128" rx="9.98" fill="#0f0a1e"/>
-  <g stroke="#7c3aed" stroke-width="8.32" stroke-linecap="round" stroke-linejoin="round" fill="none">
+  <g stroke="#7c3aed" stroke-width="9.60" stroke-linecap="round" stroke-linejoin="round" fill="none">
     <!-- N -->
-    <polyline points="19.2,92.2 19.2,35.8 46.1,92.2 46.1,35.8"/>
-    <!-- Y -->
-    <polyline points="50.6,35.8 64.0,64.0 77.4,35.8"/>
-    <line x1="64.0" y1="64.0" x2="64.0" y2="92.2"/>
+    <polyline points="19.2,92.2 19.2,35.8 56.8,92.2 56.8,35.8"/>
     <!-- X -->
-    <line x1="81.9" y1="35.8" x2="108.8" y2="92.2"/>
-    <line x1="108.8" y1="35.8" x2="81.9" y2="92.2"/>
+    <line x1="71.2" y1="35.8" x2="108.8" y2="92.2"/>
+    <line x1="108.8" y1="35.8" x2="71.2" y2="92.2"/>
   </g>
 </svg>
