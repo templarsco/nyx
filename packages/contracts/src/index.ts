@@ -15,3 +15,5 @@ export * from "./rpc";
 export * from "./notification";
 export * from "./teams";
 export * from "./teammateProcess";
+export * from "./coordinator";
+export * from "./kairos";
