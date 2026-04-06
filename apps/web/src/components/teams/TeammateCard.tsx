@@ -68,10 +68,10 @@ function formatPrStatus(prStatus: Teammate["prStatus"]): string {
 
 interface TeammateCardProps {
   teammate: Teammate;
-  onReply?: (teammateId: string) => void;
-  onApprove?: (teammateId: string) => void;
-  onSkip?: (teammateId: string) => void;
-  onRemove?: (teammateId: string) => void;
+  onReply?: ((teammateId: string) => void) | undefined;
+  onApprove?: ((teammateId: string) => void) | undefined;
+  onSkip?: ((teammateId: string) => void) | undefined;
+  onRemove?: ((teammateId: string) => void) | undefined;
 }
 
 export function TeammateCard({
