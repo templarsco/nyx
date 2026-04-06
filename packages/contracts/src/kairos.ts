@@ -33,7 +33,7 @@ export const KairosObservation = Schema.Struct({
   type: KairosObservationType,
   source: Schema.String,
   summary: Schema.String,
-  data: Schema.Record({ key: Schema.String, value: Schema.Unknown }),
+  data: Schema.Record(Schema.String, Schema.Unknown),
   acted: Schema.Boolean,
 });
 export type KairosObservation = typeof KairosObservation.Type;
