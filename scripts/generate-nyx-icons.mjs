@@ -4,8 +4,9 @@
  * Generates all icon assets for the Nyx AI terminal multiplexer.
  * Pure Node.js — no external image libraries required.
  *
- * Design: A minimalist crescent moon on a dark background with violet (#7c3aed) accent.
- * The crescent evokes "night" (Nyx = Greek goddess of night).
+ * Design: Bold geometric "NYX" lettermark on dark background with rounded corners.
+ * Violet (#7c3aed) letters on dark indigo (#0f0a1e).
+ * At 16x16 uses "NX" monogram for legibility.
  */
 
 import { deflateSync } from "node:zlib";
@@ -25,126 +26,186 @@ const DEV_BG = { r: 10, g: 15, b: 35 }; // dark blue bg for dev
 function generateSvgLogo(size = 128, isDev = false) {
   const accent = isDev ? "#3b82f6" : "#7c3aed";
   const bg = isDev ? "#0a0f23" : "#0f0a1e";
-  const accentLight = isDev ? "#60a5fa" : "#a78bfa";
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = size * 0.32; // main moon radius
-  const cutR = size * 0.26; // cut circle radius
-  const cutOffsetX = size * 0.18; // how far to shift the cut
-  const cutOffsetY = -size * 0.05;
+  const cornerR = (size * 0.078).toFixed(2);
 
-  // Star positions (small dots)
-  const stars = [
-    { x: size * 0.75, y: size * 0.22, r: size * 0.018 },
-    { x: size * 0.82, y: size * 0.35, r: size * 0.012 },
-    { x: size * 0.68, y: size * 0.15, r: size * 0.01 },
-  ];
-
-  const starsSvg = stars
-    .map((s) => `<circle cx="${s.x}" cy="${s.y}" r="${s.r}" fill="${accentLight}" opacity="0.8"/>`)
-    .join("\n    ");
-
-  const cornerR = size * 0.078; // rounded corners
+  // Bold geometric NYX lettermark
+  // Letters are designed on a grid proportional to the icon size
+  // Each letter occupies roughly 1/3 of the horizontal space
+  const m = size; // shorthand
+  const pad = m * 0.15; // padding from edges
+  const letterW = (m - pad * 2) * 0.3; // width per letter
+  const gap = (m - pad * 2) * 0.05; // gap between letters
+  const top = m * 0.28; // top of letters
+  const bot = m * 0.72; // bottom of letters
+  const sw = (m * 0.065).toFixed(2); // stroke width
+  const lx0 = pad; // start of N
+  const lx1 = lx0 + letterW + gap; // start of Y
+  const lx2 = lx1 + letterW + gap; // start of X
 
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="${size}" height="${size}" rx="${cornerR}" fill="${bg}"/>
-  <defs>
-    <mask id="moon-mask">
-      <rect width="${size}" height="${size}" fill="white"/>
-      <circle cx="${cx + cutOffsetX}" cy="${cy + cutOffsetY}" r="${cutR}" fill="black"/>
-    </mask>
-  </defs>
-  <circle cx="${cx - size * 0.05}" cy="${cy + size * 0.02}" r="${r}" fill="${accent}" mask="url(#moon-mask)"/>
-  ${starsSvg}
+  <g stroke="${accent}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- N -->
+    <polyline points="${lx0.toFixed(1)},${bot.toFixed(1)} ${lx0.toFixed(1)},${top.toFixed(1)} ${(lx0 + letterW).toFixed(1)},${bot.toFixed(1)} ${(lx0 + letterW).toFixed(1)},${top.toFixed(1)}"/>
+    <!-- Y -->
+    <polyline points="${lx1.toFixed(1)},${top.toFixed(1)} ${(lx1 + letterW / 2).toFixed(1)},${((top + bot) / 2).toFixed(1)} ${(lx1 + letterW).toFixed(1)},${top.toFixed(1)}"/>
+    <line x1="${(lx1 + letterW / 2).toFixed(1)}" y1="${((top + bot) / 2).toFixed(1)}" x2="${(lx1 + letterW / 2).toFixed(1)}" y2="${bot.toFixed(1)}"/>
+    <!-- X -->
+    <line x1="${lx2.toFixed(1)}" y1="${top.toFixed(1)}" x2="${(lx2 + letterW).toFixed(1)}" y2="${bot.toFixed(1)}"/>
+    <line x1="${(lx2 + letterW).toFixed(1)}" y1="${top.toFixed(1)}" x2="${lx2.toFixed(1)}" y2="${bot.toFixed(1)}"/>
+  </g>
 </svg>`;
+}
+
+// ── Pixel-based letter definitions ─────────────────────────────────────
+
+/**
+ * Draw a thick line segment from (x0,y0) to (x1,y1) with given thickness
+ * into the pixel buffer. Uses signed distance for anti-aliasing.
+ */
+function drawLine(buf, size, x0, y0, x1, y1, thickness, color, bgColor) {
+  const halfT = thickness / 2;
+  // Bounding box with margin
+  const minX = Math.max(0, Math.floor(Math.min(x0, x1) - halfT - 1));
+  const maxX = Math.min(size - 1, Math.ceil(Math.max(x0, x1) + halfT + 1));
+  const minY = Math.max(0, Math.floor(Math.min(y0, y1) - halfT - 1));
+  const maxY = Math.min(size - 1, Math.ceil(Math.max(y0, y1) + halfT + 1));
+
+  const dx = x1 - x0;
+  const dy = y1 - y0;
+  const lenSq = dx * dx + dy * dy;
+  const len = Math.sqrt(lenSq);
+
+  for (let py = minY; py <= maxY; py++) {
+    for (let px = minX; px <= maxX; px++) {
+      // Distance from point to line segment
+      let d;
+      if (lenSq === 0) {
+        d = dist(px, py, x0, y0);
+      } else {
+        const t = Math.max(0, Math.min(1, ((px - x0) * dx + (py - y0) * dy) / lenSq));
+        const projX = x0 + t * dx;
+        const projY = y0 + t * dy;
+        d = dist(px, py, projX, projY);
+      }
+
+      if (d <= halfT + 0.5) {
+        const alpha = clamp01(halfT - d + 0.5);
+        if (alpha > 0) {
+          const idx = (py * size + px) * 4;
+          // Read current pixel
+          const curR = buf[idx];
+          const curG = buf[idx + 1];
+          const curB = buf[idx + 2];
+          // Blend
+          buf[idx] = lerp(curR, color.r, alpha);
+          buf[idx + 1] = lerp(curG, color.g, alpha);
+          buf[idx + 2] = lerp(curB, color.b, alpha);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Draw the letter N at position (lx, ty) with given width and height
+ */
+function drawN(buf, size, lx, ty, w, h, thickness, color, bgColor) {
+  const bx = lx + w;
+  const by = ty + h;
+  // Left vertical
+  drawLine(buf, size, lx, by, lx, ty, thickness, color, bgColor);
+  // Diagonal
+  drawLine(buf, size, lx, ty, bx, by, thickness, color, bgColor);
+  // Right vertical
+  drawLine(buf, size, bx, by, bx, ty, thickness, color, bgColor);
+}
+
+/**
+ * Draw the letter Y at position (lx, ty) with given width and height
+ */
+function drawY(buf, size, lx, ty, w, h, thickness, color, bgColor) {
+  const cx = lx + w / 2;
+  const midY = ty + h * 0.45;
+  const by = ty + h;
+  // Left arm
+  drawLine(buf, size, lx, ty, cx, midY, thickness, color, bgColor);
+  // Right arm
+  drawLine(buf, size, lx + w, ty, cx, midY, thickness, color, bgColor);
+  // Stem
+  drawLine(buf, size, cx, midY, cx, by, thickness, color, bgColor);
+}
+
+/**
+ * Draw the letter X at position (lx, ty) with given width and height
+ */
+function drawX(buf, size, lx, ty, w, h, thickness, color, bgColor) {
+  const bx = lx + w;
+  const by = ty + h;
+  // Forward diagonal
+  drawLine(buf, size, lx, ty, bx, by, thickness, color, bgColor);
+  // Back diagonal
+  drawLine(buf, size, bx, ty, lx, by, thickness, color, bgColor);
 }
 
 // ── Pixel rendering ────────────────────────────────────────────────────
 
-/** Render the Nyx crescent moon icon to raw RGBA pixel buffer */
+/** Render the Nyx lettermark icon to raw RGBA pixel buffer */
 function renderIcon(size, isDev = false) {
   const accent = isDev ? DEV_TINT : VIOLET;
   const bg = isDev ? DEV_BG : DARK_BG;
-  const accentLight = isDev ? { r: 96, g: 165, b: 250 } : { r: 167, g: 139, b: 250 };
 
   const buf = Buffer.alloc(size * size * 4);
-  const cx = size / 2;
-  const cy = size / 2;
-  const moonR = size * 0.32;
-  const moonCx = cx - size * 0.05;
-  const moonCy = cy + size * 0.02;
-  const cutR = size * 0.26;
-  const cutCx = cx + size * 0.18;
-  const cutCy = cy - size * 0.05;
   const cornerR = size * 0.078;
 
-  // Stars
-  const stars = [
-    { x: size * 0.75, y: size * 0.22, r: size * 0.018 },
-    { x: size * 0.82, y: size * 0.35, r: size * 0.012 },
-    { x: size * 0.68, y: size * 0.15, r: size * 0.01 },
-  ];
-
+  // Fill background
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const idx = (y * size + x) * 4;
-
-      // Rounded rectangle check
       if (!inRoundedRect(x, y, size, size, cornerR)) {
         buf[idx] = 0;
         buf[idx + 1] = 0;
         buf[idx + 2] = 0;
         buf[idx + 3] = 0;
-        continue;
+      } else {
+        buf[idx] = bg.r;
+        buf[idx + 1] = bg.g;
+        buf[idx + 2] = bg.b;
+        buf[idx + 3] = 255;
       }
-
-      // Default: background
-      let r = bg.r,
-        g = bg.g,
-        b = bg.b,
-        a = 255;
-
-      // Check if in moon but not in cut
-      const dMoon = dist(x, y, moonCx, moonCy);
-      const dCut = dist(x, y, cutCx, cutCy);
-
-      if (dMoon <= moonR && dCut > cutR) {
-        // Inside crescent — apply anti-aliasing at edges
-        const moonAA = clamp01(moonR - dMoon + 0.5);
-        const cutAA = clamp01(dCut - cutR + 0.5);
-        const alpha = Math.min(moonAA, cutAA);
-        r = lerp(bg.r, accent.r, alpha);
-        g = lerp(bg.g, accent.g, alpha);
-        b = lerp(bg.b, accent.b, alpha);
-      } else if (dMoon <= moonR + 1 && dCut > cutR - 1) {
-        // Anti-alias edge of moon
-        const moonAA = clamp01(moonR - dMoon + 0.5);
-        const cutAA = clamp01(dCut - cutR + 0.5);
-        const alpha = Math.min(moonAA, cutAA);
-        if (alpha > 0) {
-          r = lerp(bg.r, accent.r, alpha);
-          g = lerp(bg.g, accent.g, alpha);
-          b = lerp(bg.b, accent.b, alpha);
-        }
-      }
-
-      // Stars
-      for (const star of stars) {
-        const dStar = dist(x, y, star.x, star.y);
-        if (dStar <= star.r + 0.5) {
-          const starAlpha = clamp01(star.r - dStar + 0.5) * 0.8;
-          r = lerp(r, accentLight.r, starAlpha);
-          g = lerp(g, accentLight.g, starAlpha);
-          b = lerp(b, accentLight.b, starAlpha);
-        }
-      }
-
-      buf[idx] = r;
-      buf[idx + 1] = g;
-      buf[idx + 2] = b;
-      buf[idx + 3] = a;
     }
   }
+
+  // Letter layout parameters
+  const pad = size * 0.15;
+  const top = size * 0.28;
+  const bot = size * 0.72;
+  const letterH = bot - top;
+
+  if (size <= 16) {
+    // At 16x16, draw "NX" monogram for legibility
+    const totalW = size - pad * 2;
+    const letterW = totalW * 0.42;
+    const gap = totalW * 0.16;
+    const thickness = Math.max(1.2, size * 0.1);
+    const lx0 = pad;
+    const lx1 = lx0 + letterW + gap;
+    drawN(buf, size, lx0, top, letterW, letterH, thickness, accent, bg);
+    drawX(buf, size, lx1, top, letterW, letterH, thickness, accent, bg);
+  } else {
+    // 32+ sizes: full "NYX"
+    const totalW = size - pad * 2;
+    const letterW = totalW * 0.28;
+    const gap = totalW * 0.08;
+    const thickness = Math.max(1.5, size * 0.065);
+    const lx0 = pad;
+    const lx1 = lx0 + letterW + gap;
+    const lx2 = lx1 + letterW + gap;
+    drawN(buf, size, lx0, top, letterW, letterH, thickness, accent, bg);
+    drawY(buf, size, lx1, top, letterW, letterH, thickness, accent, bg);
+    drawX(buf, size, lx2, top, letterW, letterH, thickness, accent, bg);
+  }
+
   return buf;
 }
 
@@ -295,7 +356,7 @@ function generateAll() {
   mkdirSync(webPublicDir, { recursive: true });
   mkdirSync(desktopResDir, { recursive: true });
 
-  console.log("Generating Nyx icons...\n");
+  console.log("Generating Nyx lettermark icons...\n");
 
   // ── Production icons ───────────────────────────────────────────────
 
@@ -399,7 +460,7 @@ function generateAll() {
   writeFileSync(join(desktopResDir, "icon.png"), png512);
   console.log("  [desk] icon.png");
 
-  console.log("\nDone! All Nyx icons generated.");
+  console.log("\nDone! All Nyx lettermark icons generated.");
 }
 
 generateAll();
