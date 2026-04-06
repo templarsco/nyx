@@ -1,0 +1,24 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist-electron/**"],
+    },
+    "dev": {
+      "dependsOn": ["nyx#build"],
+      "persistent": true,
+    },
+    "start": {
+      "dependsOn": ["build", "@nyx/web#build", "nyx#build"],
+      "cache": false,
+      "persistent": true,
+    },
+    "smoke-test": {
+      "dependsOn": ["build", "@nyx/web#build", "nyx#build"],
+      "cache": false,
+      "outputs": [],
+    },
+  },
+}

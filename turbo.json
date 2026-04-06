@@ -1,0 +1,47 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "PORT",
+    "VITE_WS_URL",
+    "VITE_DEV_SERVER_URL",
+    "ELECTRON_RENDERER_PORT",
+    "NYX_LOG_WS_EVENTS",
+    "NYX_MODE",
+    "NYX_PORT",
+    "NYX_NO_BROWSER",
+    "NYX_HOME",
+    "NYX_AUTH_TOKEN",
+    "NYX_DESKTOP_WS_URL",
+    "NYX_TRACE_MIN_LEVEL",
+    "NYX_TRACE_TIMING_ENABLED",
+    "NYX_TRACE_FILE",
+    "NYX_TRACE_MAX_BYTES",
+    "NYX_TRACE_MAX_FILES",
+    "NYX_TRACE_BATCH_WINDOW_MS",
+    "NYX_OTLP_TRACES_URL",
+    "NYX_OTLP_METRICS_URL",
+    "NYX_OTLP_EXPORT_INTERVAL_MS",
+    "NYX_OTLP_SERVICE_NAME"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "dist-electron/**"]
+    },
+    "dev": {
+      "dependsOn": ["@nyx/contracts#build"],
+      "cache": false,
+      "persistent": true
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [],
+      "cache": false
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "outputs": []
+    }
+  }
+}
