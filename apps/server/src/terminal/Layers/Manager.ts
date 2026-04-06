@@ -182,7 +182,8 @@ function enqueueProcessEvent(
 
 function defaultShellResolver(): string {
   if (process.platform === "win32") {
-    return process.env.ComSpec ?? "cmd.exe";
+    // Prefer PowerShell over cmd.exe for better terminal rendering and modern CLI support
+    return "powershell.exe";
   }
   return process.env.SHELL ?? "bash";
 }
@@ -234,8 +235,9 @@ function resolveShellCandidates(shellResolver: () => string): ShellCandidate[] {
   if (process.platform === "win32") {
     return uniqueShellCandidates([
       requested,
-      shellCandidateFromCommand(process.env.ComSpec ?? null),
       shellCandidateFromCommand("powershell.exe"),
+      shellCandidateFromCommand("pwsh.exe"), // PowerShell 7+ (cross-platform)
+      shellCandidateFromCommand(process.env.ComSpec ?? null),
       shellCandidateFromCommand("cmd.exe"),
     ]);
   }
