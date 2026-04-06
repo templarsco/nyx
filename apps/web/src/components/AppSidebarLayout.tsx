@@ -1,12 +1,32 @@
-import { useEffect, type ReactNode } from "react";
+import { useCallback, useEffect, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 import ThreadSidebar from "./Sidebar";
-import { Sidebar, SidebarProvider, SidebarRail } from "./ui/sidebar";
+import { Sidebar, SidebarProvider, SidebarRail, useSidebar } from "./ui/sidebar";
 
 const THREAD_SIDEBAR_WIDTH_STORAGE_KEY = "chat_thread_sidebar_width";
 const THREAD_SIDEBAR_MIN_WIDTH = 13 * 16;
 const THREAD_MAIN_CONTENT_MIN_WIDTH = 40 * 16;
+
+/** Inner component that can access useSidebar() context */
+function SidebarKeyboardShortcut() {
+  const { toggleSidebar } = useSidebar();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+B (or Cmd+B on Mac) toggles sidebar
+      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+        e.preventDefault();
+        toggleSidebar();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggleSidebar]);
+
+  return null;
+}
 
 export function AppSidebarLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -29,9 +49,10 @@ export function AppSidebarLayout({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen>
+      <SidebarKeyboardShortcut />
       <Sidebar
         side="left"
-        collapsible="offcanvas"
+        collapsible="icon"
         className="border-r border-border bg-card text-foreground"
         resizable={{
           minWidth: THREAD_SIDEBAR_MIN_WIDTH,
