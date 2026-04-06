@@ -16,9 +16,9 @@ const ROOT = process.argv[2] || ".";
 
 // ── Color palette ──────────────────────────────────────────────────────
 const VIOLET = { r: 124, g: 58, b: 237 }; // #7c3aed
-const DARK_BG = { r: 15, g: 10, b: 30 };  // very dark indigo/purple background
+const DARK_BG = { r: 15, g: 10, b: 30 }; // very dark indigo/purple background
 const DEV_TINT = { r: 59, g: 130, b: 246 }; // #3b82f6 — blue tint for dev icons
-const DEV_BG = { r: 10, g: 15, b: 35 };   // dark blue bg for dev
+const DEV_BG = { r: 10, g: 15, b: 35 }; // dark blue bg for dev
 
 // ── SVG Generation ─────────────────────────────────────────────────────
 
@@ -28,8 +28,8 @@ function generateSvgLogo(size = 128, isDev = false) {
   const accentLight = isDev ? "#60a5fa" : "#a78bfa";
   const cx = size / 2;
   const cy = size / 2;
-  const r = size * 0.32;        // main moon radius
-  const cutR = size * 0.26;     // cut circle radius
+  const r = size * 0.32; // main moon radius
+  const cutR = size * 0.26; // cut circle radius
   const cutOffsetX = size * 0.18; // how far to shift the cut
   const cutOffsetY = -size * 0.05;
 
@@ -37,7 +37,7 @@ function generateSvgLogo(size = 128, isDev = false) {
   const stars = [
     { x: size * 0.75, y: size * 0.22, r: size * 0.018 },
     { x: size * 0.82, y: size * 0.35, r: size * 0.012 },
-    { x: size * 0.68, y: size * 0.15, r: size * 0.010 },
+    { x: size * 0.68, y: size * 0.15, r: size * 0.01 },
   ];
 
   const starsSvg = stars
@@ -65,9 +65,7 @@ function generateSvgLogo(size = 128, isDev = false) {
 function renderIcon(size, isDev = false) {
   const accent = isDev ? DEV_TINT : VIOLET;
   const bg = isDev ? DEV_BG : DARK_BG;
-  const accentLight = isDev
-    ? { r: 96, g: 165, b: 250 }
-    : { r: 167, g: 139, b: 250 };
+  const accentLight = isDev ? { r: 96, g: 165, b: 250 } : { r: 167, g: 139, b: 250 };
 
   const buf = Buffer.alloc(size * size * 4);
   const cx = size / 2;
@@ -84,7 +82,7 @@ function renderIcon(size, isDev = false) {
   const stars = [
     { x: size * 0.75, y: size * 0.22, r: size * 0.018 },
     { x: size * 0.82, y: size * 0.35, r: size * 0.012 },
-    { x: size * 0.68, y: size * 0.15, r: size * 0.010 },
+    { x: size * 0.68, y: size * 0.15, r: size * 0.01 },
   ];
 
   for (let y = 0; y < size; y++) {
@@ -101,7 +99,10 @@ function renderIcon(size, isDev = false) {
       }
 
       // Default: background
-      let r = bg.r, g = bg.g, b = bg.b, a = 255;
+      let r = bg.r,
+        g = bg.g,
+        b = bg.b,
+        a = 255;
 
       // Check if in moon but not in cut
       const dMoon = dist(x, y, moonCx, moonCy);
@@ -193,8 +194,8 @@ function encodePng(rgba, width, height) {
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(width, 0);
   ihdr.writeUInt32BE(height, 4);
-  ihdr[8] = 8;  // bit depth
-  ihdr[9] = 6;  // color type: RGBA
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 6; // color type: RGBA
   ihdr[10] = 0; // compression
   ihdr[11] = 0; // filter
   ihdr[12] = 0; // interlace
@@ -253,8 +254,8 @@ function encodeIco(pngBuffers, sizes) {
 
   // Header
   const header = Buffer.alloc(headerSize);
-  header.writeUInt16LE(0, 0);     // reserved
-  header.writeUInt16LE(1, 2);     // type: ICO
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: ICO
   header.writeUInt16LE(numImages, 4);
 
   const dirEntries = [];
@@ -264,14 +265,14 @@ function encodeIco(pngBuffers, sizes) {
     const png = pngBuffers[i];
     const s = sizes[i];
     const entry = Buffer.alloc(dirEntrySize);
-    entry[0] = s >= 256 ? 0 : s;  // width (0 = 256)
-    entry[1] = s >= 256 ? 0 : s;  // height
-    entry[2] = 0;                   // color palette
-    entry[3] = 0;                   // reserved
-    entry.writeUInt16LE(1, 4);     // color planes
-    entry.writeUInt16LE(32, 6);    // bits per pixel
-    entry.writeUInt32LE(png.length, 8);    // data size
-    entry.writeUInt32LE(dataOffset, 12);   // data offset
+    entry[0] = s >= 256 ? 0 : s; // width (0 = 256)
+    entry[1] = s >= 256 ? 0 : s; // height
+    entry[2] = 0; // color palette
+    entry[3] = 0; // reserved
+    entry.writeUInt16LE(1, 4); // color planes
+    entry.writeUInt16LE(32, 6); // bits per pixel
+    entry.writeUInt32LE(png.length, 8); // data size
+    entry.writeUInt32LE(dataOffset, 12); // data offset
     dirEntries.push(entry);
     dataChunks.push(png);
     dataOffset += png.length;
@@ -381,7 +382,10 @@ function generateAll() {
   console.log("  [web]  favicon-16x16.png");
   copyFileSync(join(prodDir, "nyx-web-favicon-32x32.png"), join(webPublicDir, "favicon-32x32.png"));
   console.log("  [web]  favicon-32x32.png");
-  copyFileSync(join(prodDir, "nyx-web-apple-touch-180.png"), join(webPublicDir, "apple-touch-icon.png"));
+  copyFileSync(
+    join(prodDir, "nyx-web-apple-touch-180.png"),
+    join(webPublicDir, "apple-touch-icon.png"),
+  );
   console.log("  [web]  apple-touch-icon.png");
 
   // ── Desktop resources ──────────────────────────────────────────────

@@ -4,10 +4,7 @@ import type { ActivityEntry, ActivityEntryType } from "~/teamsStore";
 
 // ── Type styling ─────────────────────────────────────────────────────
 
-const ENTRY_TYPE_CONFIG: Record<
-  ActivityEntryType,
-  { dotClass: string; nameClass: string }
-> = {
+const ENTRY_TYPE_CONFIG: Record<ActivityEntryType, { dotClass: string; nameClass: string }> = {
   started: {
     dotClass: "bg-blue-500",
     nameClass: "text-blue-700 dark:text-blue-400",
@@ -73,18 +70,19 @@ export function ActivityFeed({ entries, className }: ActivityFeedProps) {
 
   if (visibleEntries.length === 0) {
     return (
-      <div className={cn("flex items-center justify-center py-8 text-sm text-muted-foreground", className)}>
+      <div
+        className={cn(
+          "flex items-center justify-center py-8 text-sm text-muted-foreground",
+          className,
+        )}
+      >
         No activity yet. Spawn an agent to get started.
       </div>
     );
   }
 
   return (
-    <div
-      ref={scrollRef}
-      onScroll={handleScroll}
-      className={cn("overflow-y-auto", className)}
-    >
+    <div ref={scrollRef} onScroll={handleScroll} className={cn("overflow-y-auto", className)}>
       <div className="relative pl-4">
         {/* Vertical timeline line */}
         <div className="absolute left-[7px] top-2 bottom-2 w-px bg-border" />
@@ -109,9 +107,7 @@ export function ActivityFeed({ entries, className }: ActivityFeedProps) {
                   <span className={cn("shrink-0 font-semibold", config.nameClass)}>
                     {entry.teammateName}
                   </span>
-                  <span className="truncate text-muted-foreground">
-                    {entry.message}
-                  </span>
+                  <span className="truncate text-muted-foreground">{entry.message}</span>
                 </div>
               </div>
             </div>

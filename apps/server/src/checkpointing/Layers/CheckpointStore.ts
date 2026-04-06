@@ -92,7 +92,7 @@ const makeCheckpointStore = Effect.gen(function* () {
     const operation = "CheckpointStore.captureCheckpoint";
 
     yield* Effect.acquireUseRelease(
-      fs.makeTempDirectory({ prefix: "t3-fs-checkpoint-" }),
+      fs.makeTempDirectory({ prefix: "nyx-fs-checkpoint-" }),
       Effect.fn("captureCheckpoint.withTempDirectory")(function* (tempDir) {
         const tempIndexPath = path.join(tempDir, `index-${randomUUID()}`);
         const commitEnv: NodeJS.ProcessEnv = {

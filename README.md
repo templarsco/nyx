@@ -43,14 +43,14 @@ bun run dev
 
 ### Scripts
 
-| Command | Description |
-|---------|-------------|
-| `bun run dev` | Start all dev servers |
-| `bun run build` | Build all packages |
-| `bun run typecheck` | TypeScript type checking |
-| `bun run lint` | Lint with Oxlint |
-| `bun run test` | Run tests with Vitest |
-| `bun run dist:desktop:win` | Build Windows installer |
+| Command                    | Description              |
+| -------------------------- | ------------------------ |
+| `bun run dev`              | Start all dev servers    |
+| `bun run build`            | Build all packages       |
+| `bun run typecheck`        | TypeScript type checking |
+| `bun run lint`             | Lint with Oxlint         |
+| `bun run test`             | Run tests with Vitest    |
+| `bun run dist:desktop:win` | Build Windows installer  |
 
 ### Architecture
 

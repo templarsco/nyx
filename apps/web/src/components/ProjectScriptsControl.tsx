@@ -1,8 +1,4 @@
-import type {
-  ProjectScript,
-  ProjectScriptIcon,
-  ResolvedKeybindingsConfig,
-} from "@nyx/contracts";
+import type { ProjectScript, ProjectScriptIcon, ResolvedKeybindingsConfig } from "@nyx/contracts";
 import {
   BugIcon,
   ChevronDownIcon,

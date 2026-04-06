@@ -101,7 +101,7 @@ Default Grafana login:
 ```bash
 export NYX_OTLP_TRACES_URL=http://localhost:4318/v1/traces
 export NYX_OTLP_METRICS_URL=http://localhost:4318/v1/metrics
-export NYX_OTLP_SERVICE_NAME=t3-local
+export NYX_OTLP_SERVICE_NAME=nyx-local
 ```
 
 Optional:
@@ -140,7 +140,7 @@ macOS app bundle example:
 ```bash
 NYX_OTLP_TRACES_URL=http://localhost:4318/v1/traces \
 NYX_OTLP_METRICS_URL=http://localhost:4318/v1/metrics \
-NYX_OTLP_SERVICE_NAME=t3-desktop \
+NYX_OTLP_SERVICE_NAME=nyx-desktop \
 "/Applications/Nyx.app/Contents/MacOS/Nyx"
 ```
 
@@ -149,7 +149,7 @@ Direct binary example:
 ```bash
 NYX_OTLP_TRACES_URL=http://localhost:4318/v1/traces \
 NYX_OTLP_METRICS_URL=http://localhost:4318/v1/metrics \
-NYX_OTLP_SERVICE_NAME=t3-desktop \
+NYX_OTLP_SERVICE_NAME=nyx-desktop \
 ./path/to/your/desktop-app-binary
 ```
 
@@ -272,7 +272,7 @@ Recommended flow in Grafana:
 
 Good first searches:
 
-- service name such as `t3-local`, `t3-dev`, or `t3-desktop`
+- service name such as `nyx-local`, `nyx-dev`, or `nyx-desktop`
 - span names like `sql.execute`, `git.runCommand`, `provider.sendTurn`
 - orchestration spans with attributes like `orchestration.command_type`
 
@@ -284,20 +284,20 @@ Traces are best for one request. Metrics are best for trends.
 
 Good metric families to watch:
 
-- `t3_rpc_request_duration`
-- `t3_orchestration_command_duration`
-- `t3_orchestration_command_ack_duration`
-- `t3_provider_turn_duration`
-- `t3_git_command_duration`
-- `t3_db_query_duration`
+- `nyx_rpc_request_duration`
+- `nyx_orchestration_command_duration`
+- `nyx_orchestration_command_ack_duration`
+- `nyx_provider_turn_duration`
+- `nyx_git_command_duration`
+- `nyx_db_query_duration`
 
 Counters tell you volume and failure rate:
 
-- `t3_rpc_requests_total`
-- `t3_orchestration_commands_total`
-- `t3_provider_turns_total`
-- `t3_git_commands_total`
-- `t3_db_queries_total`
+- `nyx_rpc_requests_total`
+- `nyx_orchestration_commands_total`
+- `nyx_provider_turns_total`
+- `nyx_git_commands_total`
+- `nyx_db_queries_total`
 
 Use metrics when the question is:
 
@@ -313,7 +313,7 @@ Use traces when the question is:
 
 ### What The New Ack Metric Means
 
-`t3_orchestration_command_ack_duration` measures:
+`nyx_orchestration_command_ack_duration` measures:
 
 - start: command dispatch enters the orchestration engine
 - end: the first committed domain event for that command is published by the server
@@ -344,7 +344,7 @@ If you need those later, add client-side instrumentation or a dedicated server f
 
 ### "Did this command take too long to acknowledge?"
 
-1. Check `t3_orchestration_command_ack_duration` by `commandType`.
+1. Check `nyx_orchestration_command_ack_duration` by `commandType`.
 2. If it is high, inspect the corresponding orchestration trace.
 3. Look at child spans for projection, sqlite, provider, or git work.
 
@@ -494,7 +494,7 @@ OTLP export:
 - `NYX_OTLP_TRACES_URL`: OTLP trace endpoint
 - `NYX_OTLP_METRICS_URL`: OTLP metric endpoint
 - `NYX_OTLP_EXPORT_INTERVAL_MS`: export interval, default `10000`
-- `NYX_OTLP_SERVICE_NAME`: service name, default `t3-server`
+- `NYX_OTLP_SERVICE_NAME`: service name, default `nyx-server`
 
 If the OTLP URLs are unset, local tracing still works and metrics stay in-process only.
 

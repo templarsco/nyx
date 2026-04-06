@@ -62,19 +62,10 @@ function SplitPane({ teammate, className }: SplitPaneProps) {
         <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
           <Bot className="size-3 text-primary" />
         </div>
-        <span className="truncate text-xs font-semibold text-foreground">
-          {teammate.name}
-        </span>
+        <span className="truncate text-xs font-semibold text-foreground">{teammate.name}</span>
         <div className="flex items-center gap-1">
-          <span
-            className={cn("size-1.5 rounded-full", STATUS_DOT_CLASSES[teammate.status])}
-          />
-          <span
-            className={cn(
-              "text-[0.625rem] font-medium",
-              STATUS_CLASSES[teammate.status],
-            )}
-          >
+          <span className={cn("size-1.5 rounded-full", STATUS_DOT_CLASSES[teammate.status])} />
+          <span className={cn("text-[0.625rem] font-medium", STATUS_CLASSES[teammate.status])}>
             {capitalizeStatus(teammate.status)}
           </span>
         </div>
@@ -88,9 +79,7 @@ function SplitPane({ teammate, className }: SplitPaneProps) {
       <div className="flex flex-1 flex-col overflow-y-auto p-3">
         {teammate.currentTask && (
           <div className="mb-3 rounded-lg bg-muted/40 px-3 py-2">
-            <p className="text-xs leading-relaxed text-foreground/80">
-              {teammate.currentTask}
-            </p>
+            <p className="text-xs leading-relaxed text-foreground/80">{teammate.currentTask}</p>
           </div>
         )}
 
@@ -122,10 +111,7 @@ export function TeamsSplitView({ className }: TeamsSplitViewProps) {
   const activeTeammates = useMemo(
     () =>
       teammates.filter(
-        (t) =>
-          t.status === "coding" ||
-          t.status === "waiting" ||
-          t.status === "idle",
+        (t) => t.status === "coding" || t.status === "waiting" || t.status === "idle",
       ),
     [teammates],
   );
@@ -144,9 +130,7 @@ export function TeamsSplitView({ className }: TeamsSplitViewProps) {
       <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3">
         <div className="flex items-center gap-2.5">
           <h2 className="text-sm font-semibold text-foreground">Split View</h2>
-          <span className="text-xs text-muted-foreground">
-            {activeTeammates.length} active
-          </span>
+          <span className="text-xs text-muted-foreground">{activeTeammates.length} active</span>
         </div>
         <TeamsToggle />
       </div>

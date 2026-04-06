@@ -1,8 +1,4 @@
-import {
-  type GitActionProgressEvent,
-  type GitStackedAction,
-  type ThreadId,
-} from "@nyx/contracts";
+import { type GitActionProgressEvent, type GitStackedAction, type ThreadId } from "@nyx/contracts";
 import {
   infiniteQueryOptions,
   mutationOptions,

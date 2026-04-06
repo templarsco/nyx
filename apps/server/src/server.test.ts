@@ -215,9 +215,9 @@ const makeBrowserOtlpPayload = (spanName: string) =>
         url: collector.url,
         exportInterval: "10 millis",
         resource: {
-          serviceName: "t3-web",
+          serviceName: "nyx-web",
           attributes: {
-            "service.runtime": "t3-web",
+            "service.runtime": "nyx-web",
             "service.mode": "browser",
             "service.version": "test",
           },
@@ -264,7 +264,7 @@ const buildAppUnderTest = (options?: {
 }) =>
   Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
-    const tempBaseDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3-router-test-" });
+    const tempBaseDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "nyx-router-test-" });
     const baseDir = options?.config?.baseDir ?? tempBaseDir;
     const devUrl = options?.config?.devUrl;
     const derivedPaths = yield* deriveServerPaths(baseDir, devUrl);
@@ -448,7 +448,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const staticDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3-router-static-" });
+      const staticDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "nyx-router-static-" });
       const indexPath = path.join(staticDir, "index.html");
       yield* fileSystem.writeFileString(indexPath, "<html>router-static-ok</html>");
 
@@ -479,7 +479,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const projectDir = yield* fileSystem.makeTempDirectoryScoped({
-        prefix: "t3-router-project-favicon-",
+        prefix: "nyx-router-project-favicon-",
       });
       yield* fileSystem.writeFileString(
         path.join(projectDir, "favicon.svg"),
@@ -503,7 +503,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const projectDir = yield* fileSystem.makeTempDirectoryScoped({
-        prefix: "t3-router-project-favicon-fallback-",
+        prefix: "nyx-router-project-favicon-fallback-",
       });
 
       yield* buildAppUnderTest({
@@ -578,7 +578,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
               attributes: [
                 {
                   key: "service.name",
-                  value: { stringValue: "t3-web" },
+                  value: { stringValue: "nyx-web" },
                 },
               ],
             },
@@ -718,7 +718,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
             "rpc.method": "server.getSettings",
           },
           resourceAttributes: {
-            "service.name": "t3-web",
+            "service.name": "nyx-web",
           },
           scope: {
             name: "effect",
@@ -838,7 +838,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
         assert.deepEqual(record.links, []);
         assert.equal(record.scope.name, scopeSpan.scope.name);
         assert.deepEqual(record.scope.attributes, {});
-        assert.equal(record.resourceAttributes["service.name"], "t3-web");
+        assert.equal(record.resourceAttributes["service.name"], "nyx-web");
         assert.equal(record.status?.code, String(span.status.code));
       }).pipe(Effect.provide(NodeHttpServer.layerTest)),
   );
@@ -894,7 +894,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-auth-required-" });
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "nyx-ws-auth-required-" });
       yield* fs.writeFileString(
         path.join(workspaceDir, "needle-file.ts"),
         "export const needle = 1;",
@@ -926,7 +926,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-auth-ok-" });
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "nyx-ws-auth-ok-" });
       yield* fs.writeFileString(
         path.join(workspaceDir, "needle-file.ts"),
         "export const needle = 1;",
@@ -1101,7 +1101,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-search-" });
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "nyx-ws-project-search-" });
       yield* fs.writeFileString(
         path.join(workspaceDir, "needle-file.ts"),
         "export const needle = 1;",
@@ -1154,7 +1154,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-write-" });
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "nyx-ws-project-write-" });
 
       yield* buildAppUnderTest();
 
@@ -1178,7 +1178,7 @@ it.layer(NodeServices.layer)("server router seam", (it) => {
   it.effect("routes websocket rpc projects.writeFile errors", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
-      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ws-project-write-" });
+      const workspaceDir = yield* fs.makeTempDirectoryScoped({ prefix: "nyx-ws-project-write-" });
 
       yield* buildAppUnderTest();
 

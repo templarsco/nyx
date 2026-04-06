@@ -51,10 +51,7 @@ import {
 } from "@nyx/contracts";
 import { useQueries } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate, useParams } from "@tanstack/react-router";
-import {
-  type SidebarProjectSortOrder,
-  type SidebarThreadSortOrder,
-} from "@nyx/contracts/settings";
+import { type SidebarProjectSortOrder, type SidebarThreadSortOrder } from "@nyx/contracts/settings";
 import { isElectron } from "../env";
 import { APP_STAGE_LABEL, APP_VERSION } from "../branding";
 import { isTerminalFocused } from "../lib/terminalFocus";

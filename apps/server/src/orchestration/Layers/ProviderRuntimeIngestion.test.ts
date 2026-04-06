@@ -2,11 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import type {
-  OrchestrationReadModel,
-  ProviderRuntimeEvent,
-  ProviderSession,
-} from "@nyx/contracts";
+import type { OrchestrationReadModel, ProviderRuntimeEvent, ProviderSession } from "@nyx/contracts";
 import {
   ApprovalRequestId,
   CommandId,
@@ -196,7 +192,7 @@ describe("ProviderRuntimeIngestion", () => {
   });
 
   async function createHarness(options?: { serverSettings?: Partial<ServerSettings> }) {
-    const workspaceRoot = makeTempDir("t3-provider-project-");
+    const workspaceRoot = makeTempDir("nyx-provider-project-");
     fs.mkdirSync(path.join(workspaceRoot, ".git"));
     const provider = createProviderServiceHarness();
     const orchestrationLayer = OrchestrationEngineLive.pipe(

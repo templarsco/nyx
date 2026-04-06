@@ -54,13 +54,7 @@ function NyxLogo({ className }: { className?: string }) {
           <circle cx="87.04" cy="57.6" r="33.28" fill="black" />
         </mask>
       </defs>
-      <circle
-        cx="57.6"
-        cy="66.56"
-        r="40.96"
-        fill="#7c3aed"
-        mask="url(#nyx-onboarding-moon-mask)"
-      />
+      <circle cx="57.6" cy="66.56" r="40.96" fill="#7c3aed" mask="url(#nyx-onboarding-moon-mask)" />
       <circle cx="96" cy="28.16" r="2.304" fill="#a78bfa" opacity="0.8" />
       <circle cx="104.96" cy="44.8" r="1.536" fill="#a78bfa" opacity="0.8" />
       <circle cx="87.04" cy="19.2" r="1.28" fill="#a78bfa" opacity="0.8" />
@@ -76,9 +70,7 @@ function OnboardingScreen() {
 
   // Step navigation
   const [step, setStep] = useState<OnboardingStep>("choose");
-  const [selectedPath, setSelectedPath] = useState<"easy" | "advanced" | null>(
-    null,
-  );
+  const [selectedPath, setSelectedPath] = useState<"easy" | "advanced" | null>(null);
 
   // Provider form state
   const [advancedType, setAdvancedType] = useState<ProviderType>("anthropic");
@@ -87,8 +79,7 @@ function OnboardingScreen() {
   const [customName, setCustomName] = useState("");
 
   // Connection test
-  const [connectionState, setConnectionState] =
-    useState<ConnectionState>("idle");
+  const [connectionState, setConnectionState] = useState<ConnectionState>("idle");
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [discoveredModels, setDiscoveredModels] = useState<string[]>([]);
 
@@ -97,20 +88,13 @@ function OnboardingScreen() {
 
   // ── Derived values ───────────────────────────────────────────────────
 
-  const providerType: ProviderType =
-    selectedPath === "easy" ? "lightweight" : advancedType;
+  const providerType: ProviderType = selectedPath === "easy" ? "lightweight" : advancedType;
 
   const meta = PROVIDER_TYPE_META[providerType];
 
-  const endpoint =
-    providerType === "custom"
-      ? customEndpoint
-      : meta.defaultEndpoint;
+  const endpoint = providerType === "custom" ? customEndpoint : meta.defaultEndpoint;
 
-  const providerName =
-    providerType === "custom" && customName.length > 0
-      ? customName
-      : meta.label;
+  const providerName = providerType === "custom" && customName.length > 0 ? customName : meta.label;
 
   const isKeyValid = useMemo(() => {
     const trimmed = apiKey.trim();
@@ -121,9 +105,7 @@ function OnboardingScreen() {
     return true;
   }, [apiKey, providerType, meta.keyPrefix]);
 
-  const canTest =
-    isKeyValid &&
-    (providerType !== "custom" || customEndpoint.trim().length > 0);
+  const canTest = isKeyValid && (providerType !== "custom" || customEndpoint.trim().length > 0);
 
   // ── Connection test ──────────────────────────────────────────────────
 
@@ -176,9 +158,7 @@ function OnboardingScreen() {
       }
     } catch (err: unknown) {
       const message =
-        err instanceof Error
-          ? err.message
-          : "Connection failed. Check your network and try again.";
+        err instanceof Error ? err.message : "Connection failed. Check your network and try again.";
       setConnectionError(message);
       setConnectionState("error");
     }
@@ -237,9 +217,7 @@ function OnboardingScreen() {
             <ZapIcon className="size-5 text-primary" />
           </div>
           <div className="flex flex-1 flex-col gap-0.5">
-            <span className="text-sm font-semibold text-foreground">
-              Easy Mode
-            </span>
+            <span className="text-sm font-semibold text-foreground">Easy Mode</span>
             <span className="text-xs text-muted-foreground">
               Lightweight Gateway &mdash; one key, 25+ models
             </span>
@@ -281,9 +259,7 @@ function OnboardingScreen() {
           <SettingsIcon className="size-5 text-muted-foreground" />
         </div>
         <div className="flex flex-1 flex-col gap-0.5">
-          <span className="text-sm font-semibold text-foreground">
-            Advanced
-          </span>
+          <span className="text-sm font-semibold text-foreground">Advanced</span>
           <span className="text-xs text-muted-foreground">
             Direct provider &mdash; Anthropic, OpenAI, or custom endpoint
           </span>
@@ -390,11 +366,7 @@ function OnboardingScreen() {
             type="password"
             autoComplete="off"
             className="h-8 w-full min-w-0 rounded-[inherit] bg-transparent px-3 leading-8 outline-none placeholder:text-muted-foreground/60 font-mono text-xs"
-            placeholder={
-              providerType === "lightweight"
-                ? "lw_sk_..."
-                : `${meta.keyPrefix}...`
-            }
+            placeholder={providerType === "lightweight" ? "lw_sk_..." : `${meta.keyPrefix}...`}
             value={apiKey}
             onChange={(e) => {
               setApiKey(e.target.value);
@@ -424,9 +396,7 @@ function OnboardingScreen() {
       {connectionState === "error" && connectionError && (
         <div className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/[0.04] px-3 py-2.5">
           <AlertCircleIcon className="mt-0.5 size-3.5 shrink-0 text-destructive-foreground" />
-          <p className="text-xs leading-relaxed text-destructive-foreground">
-            {connectionError}
-          </p>
+          <p className="text-xs leading-relaxed text-destructive-foreground">{connectionError}</p>
         </div>
       )}
 
@@ -444,12 +414,8 @@ function OnboardingScreen() {
         )}
         onClick={testConnection}
       >
-        {connectionState === "testing" && (
-          <Loader2Icon className="size-4 animate-spin" />
-        )}
-        {connectionState === "success" && (
-          <CheckCircle2Icon className="size-4" />
-        )}
+        {connectionState === "testing" && <Loader2Icon className="size-4 animate-spin" />}
+        {connectionState === "success" && <CheckCircle2Icon className="size-4" />}
         {connectionState === "testing"
           ? "Testing connection..."
           : connectionState === "success"
@@ -472,9 +438,7 @@ function OnboardingScreen() {
       </button>
 
       <div className="flex flex-col gap-1.5">
-        <h3 className="text-sm font-semibold text-foreground">
-          Choose your default model
-        </h3>
+        <h3 className="text-sm font-semibold text-foreground">Choose your default model</h3>
         <p className="text-xs text-muted-foreground">
           You can change this anytime from the chat header.
         </p>
@@ -503,9 +467,7 @@ function OnboardingScreen() {
                   : "border-muted-foreground/30",
               )}
             >
-              {selectedModel === model && (
-                <CheckCircle2Icon className="size-3" />
-              )}
+              {selectedModel === model && <CheckCircle2Icon className="size-3" />}
             </span>
             <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
               {model}
@@ -552,16 +514,12 @@ function OnboardingScreen() {
         <div className="flex flex-col items-center gap-4">
           <NyxLogo className="size-16 rounded-2xl shadow-lg" />
           <div className="flex flex-col items-center gap-1.5">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Welcome to Nyx
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Welcome to Nyx</h1>
             <p className="max-w-xs text-center text-sm text-muted-foreground">
               {step === "choose" &&
                 "Connect an AI provider to get started with your coding assistant."}
-              {step === "configure" &&
-                `Enter your ${providerName} API key to connect.`}
-              {step === "model-select" &&
-                "Pick the model you want to use by default."}
+              {step === "configure" && `Enter your ${providerName} API key to connect.`}
+              {step === "model-select" && "Pick the model you want to use by default."}
             </p>
           </div>
         </div>
@@ -573,19 +531,15 @@ function OnboardingScreen() {
 
         {/* Progress dots */}
         <div className="flex items-center gap-2">
-          {(["choose", "configure", "model-select"] as const).map(
-            (dotStep) => (
-              <span
-                key={dotStep}
-                className={cn(
-                  "size-1.5 rounded-full transition-colors",
-                  dotStep === step
-                    ? "bg-primary"
-                    : "bg-muted-foreground/25",
-                )}
-              />
-            ),
-          )}
+          {(["choose", "configure", "model-select"] as const).map((dotStep) => (
+            <span
+              key={dotStep}
+              className={cn(
+                "size-1.5 rounded-full transition-colors",
+                dotStep === step ? "bg-primary" : "bg-muted-foreground/25",
+              )}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ const BootstrapEnvelopeSchema = Schema.Struct({
   mode: Schema.optional(RuntimeMode),
   port: Schema.optional(PortSchema),
   host: Schema.optional(Schema.String),
-  t3Home: Schema.optional(Schema.String),
+  nyxHome: Schema.optional(Schema.String),
   devUrl: Schema.optional(Schema.URLFromString),
   noBrowser: Schema.optional(Schema.Boolean),
   authToken: Schema.optional(Schema.String),
@@ -86,10 +86,7 @@ const EnvServerConfig = Config.all({
   logLevel: Config.logLevel("NYX_LOG_LEVEL").pipe(Config.withDefault("Info")),
   traceMinLevel: Config.logLevel("NYX_TRACE_MIN_LEVEL").pipe(Config.withDefault("Info")),
   traceTimingEnabled: Config.boolean("NYX_TRACE_TIMING_ENABLED").pipe(Config.withDefault(true)),
-  traceFile: Config.string("NYX_TRACE_FILE").pipe(
-    Config.option,
-    Config.map(Option.getOrUndefined),
-  ),
+  traceFile: Config.string("NYX_TRACE_FILE").pipe(Config.option, Config.map(Option.getOrUndefined)),
   traceMaxBytes: Config.int("NYX_TRACE_MAX_BYTES").pipe(Config.withDefault(10 * 1024 * 1024)),
   traceMaxFiles: Config.int("NYX_TRACE_MAX_FILES").pipe(Config.withDefault(10)),
   traceBatchWindowMs: Config.int("NYX_TRACE_BATCH_WINDOW_MS").pipe(Config.withDefault(200)),
@@ -101,9 +98,7 @@ const EnvServerConfig = Config.all({
     Config.option,
     Config.map(Option.getOrUndefined),
   ),
-  otlpExportIntervalMs: Config.int("NYX_OTLP_EXPORT_INTERVAL_MS").pipe(
-    Config.withDefault(10_000),
-  ),
+  otlpExportIntervalMs: Config.int("NYX_OTLP_EXPORT_INTERVAL_MS").pipe(Config.withDefault(10_000)),
   otlpServiceName: Config.string("NYX_OTLP_SERVICE_NAME").pipe(Config.withDefault("nyx-server")),
   mode: Config.schema(RuntimeMode, "NYX_MODE").pipe(
     Config.option,
@@ -111,16 +106,13 @@ const EnvServerConfig = Config.all({
   ),
   port: Config.port("NYX_PORT").pipe(Config.option, Config.map(Option.getOrUndefined)),
   host: Config.string("NYX_HOST").pipe(Config.option, Config.map(Option.getOrUndefined)),
-  t3Home: Config.string("NYX_HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
+  nyxHome: Config.string("NYX_HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
   devUrl: Config.url("VITE_DEV_SERVER_URL").pipe(Config.option, Config.map(Option.getOrUndefined)),
   noBrowser: Config.boolean("NYX_NO_BROWSER").pipe(
     Config.option,
     Config.map(Option.getOrUndefined),
   ),
-  authToken: Config.string("NYX_AUTH_TOKEN").pipe(
-    Config.option,
-    Config.map(Option.getOrUndefined),
-  ),
+  authToken: Config.string("NYX_AUTH_TOKEN").pipe(Config.option, Config.map(Option.getOrUndefined)),
   bootstrapFd: Config.int("NYX_BOOTSTRAP_FD").pipe(
     Config.option,
     Config.map(Option.getOrUndefined),
@@ -219,9 +211,9 @@ export const resolveServerConfig = (
       Option.getOrUndefined(
         resolveOptionPrecedence(
           flags.baseDir,
-          Option.fromUndefinedOr(env.t3Home),
+          Option.fromUndefinedOr(env.nyxHome),
           Option.flatMap(bootstrapEnvelope, (bootstrap) =>
-            Option.fromUndefinedOr(bootstrap.t3Home),
+            Option.fromUndefinedOr(bootstrap.nyxHome),
           ),
         ),
       ),

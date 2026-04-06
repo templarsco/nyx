@@ -82,9 +82,7 @@ describe("getOrphanedWorktreePathForThread", () => {
 
 describe("formatWorktreePathForDisplay", () => {
   it("shows only the last path segment for unix-like paths", () => {
-    const result = formatWorktreePathForDisplay(
-      "/Users/julius/.t3/worktrees/nyx-mvp/nyx-4e609bb8",
-    );
+    const result = formatWorktreePathForDisplay("/Users/julius/.t3/worktrees/nyx-mvp/nyx-4e609bb8");
     expect(result).toBe("nyx-4e609bb8");
   });
 

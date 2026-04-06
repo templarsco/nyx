@@ -33,9 +33,7 @@ function ModelSelector({ className }: ModelSelectorProps) {
 
   const groups: ModelGroup[] = useMemo(
     () =>
-      providers
-        .filter((p) => p.models.length > 0)
-        .map((p) => ({ provider: p, models: p.models })),
+      providers.filter((p) => p.models.length > 0).map((p) => ({ provider: p, models: p.models })),
     [providers],
   );
 
@@ -51,28 +49,19 @@ function ModelSelector({ className }: ModelSelectorProps) {
     [activeProviderId, setActiveProvider, setSelectedModel],
   );
 
-  const handleBlur = useCallback(
-    (event: React.FocusEvent) => {
-      // Close when focus leaves the panel entirely
-      if (
-        panelRef.current &&
-        !panelRef.current.contains(event.relatedTarget as Node)
-      ) {
-        setOpen(false);
-      }
-    },
-    [],
-  );
+  const handleBlur = useCallback((event: React.FocusEvent) => {
+    // Close when focus leaves the panel entirely
+    if (panelRef.current && !panelRef.current.contains(event.relatedTarget as Node)) {
+      setOpen(false);
+    }
+  }, []);
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    },
-    [],
-  );
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setOpen(false);
+      triggerRef.current?.focus();
+    }
+  }, []);
 
   if (providers.length === 0) {
     return null;
@@ -99,10 +88,7 @@ function ModelSelector({ className }: ModelSelectorProps) {
         <ZapIcon className="size-3 opacity-60" />
         <span className="max-w-[10rem] truncate">{displayModel}</span>
         <ChevronDownIcon
-          className={cn(
-            "size-3 opacity-50 transition-transform",
-            open && "rotate-180",
-          )}
+          className={cn("size-3 opacity-50 transition-transform", open && "rotate-180")}
         />
       </button>
 
@@ -122,9 +108,7 @@ function ModelSelector({ className }: ModelSelectorProps) {
                 {/* Provider group header */}
                 {groups.length > 1 && (
                   <>
-                    {groupIndex > 0 && (
-                      <div className="mx-2 my-1 h-px bg-border" />
-                    )}
+                    {groupIndex > 0 && <div className="mx-2 my-1 h-px bg-border" />}
                     <div className="px-2 py-1.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                       {group.provider.name}
                     </div>
@@ -134,8 +118,7 @@ function ModelSelector({ className }: ModelSelectorProps) {
                 {/* Model items */}
                 {group.models.map((model) => {
                   const isActive =
-                    group.provider.id === currentProvider?.id &&
-                    model === currentModel;
+                    group.provider.id === currentProvider?.id && model === currentModel;
 
                   return (
                     <button
@@ -149,9 +132,7 @@ function ModelSelector({ className }: ModelSelectorProps) {
                         "focus-visible:bg-accent focus-visible:text-accent-foreground",
                         isActive && "bg-accent/60 text-accent-foreground",
                       )}
-                      onClick={() =>
-                        handleSelect(group.provider.id, model)
-                      }
+                      onClick={() => handleSelect(group.provider.id, model)}
                     >
                       <span
                         className={cn(

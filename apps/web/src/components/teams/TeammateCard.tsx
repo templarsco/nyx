@@ -27,14 +27,12 @@ const STATUS_CONFIG: Record<
   coding: {
     label: "Coding",
     dotClass: "bg-emerald-500",
-    badgeClass:
-      "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/16 dark:text-emerald-400",
+    badgeClass: "bg-emerald-500/10 text-emerald-700 dark:bg-emerald-400/16 dark:text-emerald-400",
   },
   waiting: {
     label: "Waiting",
     dotClass: "bg-amber-500",
-    badgeClass:
-      "bg-amber-500/10 text-amber-700 dark:bg-amber-400/16 dark:text-amber-400",
+    badgeClass: "bg-amber-500/10 text-amber-700 dark:bg-amber-400/16 dark:text-amber-400",
   },
   error: {
     label: "Error",
@@ -44,8 +42,7 @@ const STATUS_CONFIG: Record<
   completed: {
     label: "Completed",
     dotClass: "bg-blue-500",
-    badgeClass:
-      "bg-blue-500/10 text-blue-700 dark:bg-blue-400/16 dark:text-blue-400",
+    badgeClass: "bg-blue-500/10 text-blue-700 dark:bg-blue-400/16 dark:text-blue-400",
   },
 };
 
@@ -118,9 +115,7 @@ export function TeammateCard({
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="truncate text-sm font-semibold text-foreground">
-              {teammate.name}
-            </span>
+            <span className="truncate text-sm font-semibold text-foreground">{teammate.name}</span>
             <span
               className={cn(
                 "inline-flex shrink-0 items-center gap-1 rounded-sm px-1.5 py-0.5 text-[0.625rem] font-medium leading-none",
@@ -157,9 +152,7 @@ export function TeammateCard({
           {teammate.prNumber !== null && (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
               <GitPullRequest className="size-3" />
-              <span className="font-mono text-[0.6875rem]">
-                #{teammate.prNumber}
-              </span>
+              <span className="font-mono text-[0.6875rem]">#{teammate.prNumber}</span>
               {teammate.prStatus && (
                 <span
                   className={cn(

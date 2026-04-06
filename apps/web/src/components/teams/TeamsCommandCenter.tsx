@@ -39,9 +39,7 @@ export function TeamsCommandCenter({
       {/* Top bar */}
       <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-3">
         <div className="flex items-center gap-2.5">
-          <h2 className="text-sm font-semibold text-foreground">
-            Command Center
-          </h2>
+          <h2 className="text-sm font-semibold text-foreground">Command Center</h2>
           <span className="text-xs text-muted-foreground">
             {teammates.length} agent{teammates.length !== 1 ? "s" : ""}
           </span>

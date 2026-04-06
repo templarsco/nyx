@@ -14,7 +14,7 @@ import { ServerConfig } from "../../config.ts";
 
 // ── Helpers ──
 
-const ServerConfigLayer = ServerConfig.layerTest(process.cwd(), { prefix: "t3-git-core-test-" });
+const ServerConfigLayer = ServerConfig.layerTest(process.cwd(), { prefix: "nyx-git-core-test-" });
 const GitCoreTestLayer = GitCoreLive.pipe(
   Layer.provide(ServerConfigLayer),
   Layer.provide(NodeServices.layer),
@@ -1137,12 +1137,8 @@ it.layer(TestLayer)("git integration", (it) => {
 
         expect(renamed.branch).toBe("nyx/feat/session-1");
         const branches = yield* (yield* GitCore).listBranches({ cwd: tmp });
-        expect(branches.branches.some((branch) => branch.name === "nyx/feat/session")).toBe(
-          true,
-        );
-        expect(branches.branches.some((branch) => branch.name === "nyx/feat/session-1")).toBe(
-          true,
-        );
+        expect(branches.branches.some((branch) => branch.name === "nyx/feat/session")).toBe(true);
+        expect(branches.branches.some((branch) => branch.name === "nyx/feat/session-1")).toBe(true);
         const current = branches.branches.find((branch) => branch.current);
         expect(current?.name).toBe("nyx/feat/session-1");
       }),

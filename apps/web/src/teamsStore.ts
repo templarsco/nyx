@@ -30,12 +30,7 @@ export interface Teammate {
   outputPreview: string | null;
 }
 
-export type ActivityEntryType =
-  | "started"
-  | "completed"
-  | "error"
-  | "waiting"
-  | "status_change";
+export type ActivityEntryType = "started" | "completed" | "error" | "waiting" | "status_change";
 
 export interface ActivityEntry {
   id: string;
@@ -104,9 +99,7 @@ export function updateTeammate(
 
 export function removeTeammate(state: TeamsState, id: string): TeamsState {
   const teammates = state.teammates.filter((t) => t.id !== id);
-  return teammates.length === state.teammates.length
-    ? state
-    : { ...state, teammates };
+  return teammates.length === state.teammates.length ? state : { ...state, teammates };
 }
 
 export function setViewMode(state: TeamsState, mode: TeamsViewMode): TeamsState {
@@ -127,27 +120,20 @@ export function addActivityEntry(
 }
 
 export function clearActivityFeed(state: TeamsState): TeamsState {
-  return state.activityFeed.length === 0
-    ? state
-    : { ...state, activityFeed: [] };
+  return state.activityFeed.length === 0 ? state : { ...state, activityFeed: [] };
 }
 
 // ── Getters (pure functions) ─────────────────────────────────────────
 
 export function activeTeammates(state: TeamsState): Teammate[] {
-  return state.teammates.filter(
-    (t) => t.status === "coding" || t.status === "waiting",
-  );
+  return state.teammates.filter((t) => t.status === "coding" || t.status === "waiting");
 }
 
 export function waitingTeammates(state: TeamsState): Teammate[] {
   return state.teammates.filter((t) => t.status === "waiting");
 }
 
-export function teammateById(
-  state: TeamsState,
-  id: string,
-): Teammate | undefined {
+export function teammateById(state: TeamsState, id: string): Teammate | undefined {
   return state.teammates.find((t) => t.id === id);
 }
 
@@ -163,10 +149,7 @@ const initialState: TeamsState = {
 
 interface TeamsStore extends TeamsState {
   addTeammate: (
-    input: Omit<
-      Teammate,
-      "id" | "startedAt" | "lastActivityAt" | "filesChanged" | "outputPreview"
-    >,
+    input: Omit<Teammate, "id" | "startedAt" | "lastActivityAt" | "filesChanged" | "outputPreview">,
   ) => void;
   updateTeammate: (id: string, updates: Partial<Teammate>) => void;
   removeTeammate: (id: string) => void;

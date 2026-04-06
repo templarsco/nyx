@@ -1,8 +1,4 @@
-import type {
-  GitRunStackedActionResult,
-  GitStackedAction,
-  GitStatusResult,
-} from "@nyx/contracts";
+import type { GitRunStackedActionResult, GitStackedAction, GitStatusResult } from "@nyx/contracts";
 
 export type GitActionIconName = "commit" | "push" | "pr";
 

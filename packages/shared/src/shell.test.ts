@@ -116,9 +116,7 @@ describe("readEnvironmentFromLoginShell", () => {
         options: { encoding: "utf8"; timeout: number },
       ) => string
     >(() =>
-      ["__NYX_ENV_CUSTOM_VAR_START__", "  padded value  ", "__NYX_ENV_CUSTOM_VAR_END__"].join(
-        "\n",
-      ),
+      ["__NYX_ENV_CUSTOM_VAR_START__", "  padded value  ", "__NYX_ENV_CUSTOM_VAR_END__"].join("\n"),
     );
 
     expect(readEnvironmentFromLoginShell("/bin/zsh", ["CUSTOM_VAR"], execFile)).toEqual({

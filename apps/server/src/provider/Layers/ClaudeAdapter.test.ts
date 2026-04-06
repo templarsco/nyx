@@ -10,12 +10,7 @@ import type {
   SDKMessage,
   SDKUserMessage,
 } from "@anthropic-ai/claude-agent-sdk";
-import {
-  ApprovalRequestId,
-  ProviderItemId,
-  ProviderRuntimeEvent,
-  ThreadId,
-} from "@nyx/contracts";
+import { ApprovalRequestId, ProviderItemId, ProviderRuntimeEvent, ThreadId } from "@nyx/contracts";
 import { assert, describe, it } from "@effect/vitest";
 import { Effect, Fiber, Layer, Random, Stream } from "effect";
 

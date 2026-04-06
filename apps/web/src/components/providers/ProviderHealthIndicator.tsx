@@ -35,10 +35,7 @@ interface ProviderHealthIndicatorProps {
   className?: string;
 }
 
-function ProviderHealthIndicator({
-  onOpenSettings,
-  className,
-}: ProviderHealthIndicatorProps) {
+function ProviderHealthIndicator({ onOpenSettings, className }: ProviderHealthIndicatorProps) {
   const provider = useProviderStore((s) => s.activeProvider());
   const model = useProviderStore((s) => s.activeModel());
 
@@ -48,8 +45,7 @@ function ProviderHealthIndicator({
 
   const { color, label } = STATUS_DOT[provider.healthStatus];
 
-  const modelLabel =
-    provider.selectedModel ?? model ?? "No model";
+  const modelLabel = provider.selectedModel ?? model ?? "No model";
 
   return (
     <Tooltip>
@@ -67,12 +63,7 @@ function ProviderHealthIndicator({
       >
         {/* Status dot */}
         <span className="relative flex size-2.5 shrink-0">
-          <span
-            className={cn(
-              "absolute inset-0 rounded-full",
-              color,
-            )}
-          />
+          <span className={cn("absolute inset-0 rounded-full", color)} />
           {provider.healthStatus === "healthy" && (
             <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-30" />
           )}
@@ -80,9 +71,7 @@ function ProviderHealthIndicator({
 
         {/* Provider + model */}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="truncate text-xs font-medium text-foreground">
-            {provider.name}
-          </span>
+          <span className="truncate text-xs font-medium text-foreground">{provider.name}</span>
           <span className="truncate text-[11px] leading-tight text-muted-foreground">
             {modelLabel}
           </span>

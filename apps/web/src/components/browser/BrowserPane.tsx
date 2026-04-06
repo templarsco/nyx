@@ -1,13 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Globe,
-  Loader2,
-  RefreshCw,
-  X,
-  AlertTriangle,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Globe, Loader2, RefreshCw, X, AlertTriangle } from "lucide-react";
 import { useBrowserStore } from "../../browserStore";
 
 interface BrowserPaneProps {
@@ -77,7 +69,9 @@ export function BrowserPane({ paneId, className }: BrowserPaneProps) {
 
   if (!pane) {
     return (
-      <div className={`flex items-center justify-center bg-background text-muted-foreground ${className ?? ""}`}>
+      <div
+        className={`flex items-center justify-center bg-background text-muted-foreground ${className ?? ""}`}
+      >
         <p>Browser pane not found</p>
       </div>
     );

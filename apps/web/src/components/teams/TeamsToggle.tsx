@@ -25,11 +25,7 @@ export function TeamsToggle({ className }: TeamsToggleProps) {
   // Keyboard shortcut: Ctrl+Shift+T
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.shiftKey &&
-        event.key.toLowerCase() === "t"
-      ) {
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key.toLowerCase() === "t") {
         event.preventDefault();
         toggleMode();
       }
@@ -52,9 +48,7 @@ export function TeamsToggle({ className }: TeamsToggleProps) {
       aria-label={`Switch to ${viewMode === "center" ? "split" : "command center"} view`}
     >
       <Bot className="size-3.5 text-primary" />
-      <span>
-        {viewMode === "center" ? "Split" : "Center"}
-      </span>
+      <span>{viewMode === "center" ? "Split" : "Center"}</span>
       {activeCount > 0 && (
         <span className="inline-flex size-4 items-center justify-center rounded-full bg-primary/10 text-[0.5625rem] font-semibold text-primary">
           {activeCount}

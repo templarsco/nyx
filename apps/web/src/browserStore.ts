@@ -54,7 +54,9 @@ export interface BrowserActions {
   navigateTo: (paneId: string, url: string) => void;
   updatePaneState: (
     paneId: string,
-    updates: Partial<Pick<BrowserPane, "url" | "title" | "loading" | "canGoBack" | "canGoForward" | "error">>,
+    updates: Partial<
+      Pick<BrowserPane, "url" | "title" | "loading" | "canGoBack" | "canGoForward" | "error">
+    >,
   ) => void;
 
   // History
@@ -115,7 +117,8 @@ export const useBrowserStore = create<BrowserState & BrowserActions>()(
           return {
             panes: newPanes,
             historyByPaneId: newHistory,
-            activePaneId: state.activePaneId === id ? (newPanes[0]?.id ?? null) : state.activePaneId,
+            activePaneId:
+              state.activePaneId === id ? (newPanes[0]?.id ?? null) : state.activePaneId,
           };
         });
       },

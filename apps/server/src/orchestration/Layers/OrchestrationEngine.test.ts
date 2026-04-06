@@ -38,7 +38,7 @@ const asCheckpointRef = (value: string): CheckpointRef => CheckpointRef.makeUnsa
 
 async function createOrchestrationSystem() {
   const ServerConfigLayer = ServerConfig.layerTest(process.cwd(), {
-    prefix: "t3-orchestration-engine-test-",
+    prefix: "nyx-orchestration-engine-test-",
   });
   const orchestrationLayer = OrchestrationEngineLive.pipe(
     Layer.provide(OrchestrationProjectionSnapshotQueryLive),
@@ -460,7 +460,7 @@ describe("OrchestrationEngine", () => {
 
     const snapshots = await system.run(Metric.snapshot);
     expect(
-      hasMetricSnapshot(snapshots, "t3_orchestration_command_ack_duration", {
+      hasMetricSnapshot(snapshots, "nyx_orchestration_command_ack_duration", {
         commandType: "thread.create",
         aggregateKind: "thread",
         ackEventType: "thread.created",
@@ -498,7 +498,7 @@ describe("OrchestrationEngine", () => {
 
     const snapshots = await system.run(Metric.snapshot);
     expect(
-      hasMetricSnapshot(snapshots, "t3_orchestration_commands_total", {
+      hasMetricSnapshot(snapshots, "nyx_orchestration_commands_total", {
         commandType: "thread.create",
         aggregateKind: "thread",
         outcome: "failure",
@@ -614,7 +614,7 @@ describe("OrchestrationEngine", () => {
     };
 
     const ServerConfigLayer = ServerConfig.layerTest(process.cwd(), {
-      prefix: "t3-orchestration-engine-test-",
+      prefix: "nyx-orchestration-engine-test-",
     });
 
     const runtime = ManagedRuntime.make(

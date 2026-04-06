@@ -71,9 +71,7 @@ export interface ProviderState {
   onboardingComplete: boolean;
 
   // Actions
-  addProvider: (
-    config: Omit<ProviderConfig, "id" | "healthStatus" | "lastHealthCheck">,
-  ) => string;
+  addProvider: (config: Omit<ProviderConfig, "id" | "healthStatus" | "lastHealthCheck">) => string;
   updateProvider: (id: string, updates: Partial<ProviderConfig>) => void;
   removeProvider: (id: string) => void;
   setActiveProvider: (id: string) => void;
@@ -95,21 +93,15 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function partializeState(
-  state: ProviderState,
-): PersistedProviderState {
+function partializeState(state: ProviderState): PersistedProviderState {
   return {
-    providers: state.providers.map(
-      ({ healthStatus: _h, lastHealthCheck: _l, ...rest }) => rest,
-    ),
+    providers: state.providers.map(({ healthStatus: _h, lastHealthCheck: _l, ...rest }) => rest),
     activeProviderId: state.activeProviderId,
     onboardingComplete: state.onboardingComplete,
   };
 }
 
-function hydrateProviders(
-  persisted: PersistedProviderConfig[],
-): ProviderConfig[] {
+function hydrateProviders(persisted: PersistedProviderConfig[]): ProviderConfig[] {
   return persisted.map((p) => ({
     ...p,
     healthStatus: "unknown" as const,
@@ -125,9 +117,7 @@ function migrateState(persisted: unknown): PersistedProviderState {
   return {
     providers: Array.isArray(candidate.providers) ? candidate.providers : [],
     activeProviderId:
-      typeof candidate.activeProviderId === "string"
-        ? candidate.activeProviderId
-        : null,
+      typeof candidate.activeProviderId === "string" ? candidate.activeProviderId : null,
     onboardingComplete: candidate.onboardingComplete === true,
   };
 }
@@ -159,9 +149,7 @@ export const useProviderStore = create<ProviderState>()(
           return {
             providers: [...updatedProviders, newProvider],
             activeProviderId:
-              config.isDefault || state.providers.length === 0
-                ? id
-                : state.activeProviderId,
+              config.isDefault || state.providers.length === 0 ? id : state.activeProviderId,
           };
         });
 
@@ -196,9 +184,7 @@ export const useProviderStore = create<ProviderState>()(
           return {
             providers: nextProviders,
             activeProviderId: needsNewActive
-              ? (nextProviders.find((p) => p.isDefault)?.id ??
-                nextProviders[0]?.id ??
-                null)
+              ? (nextProviders.find((p) => p.isDefault)?.id ?? nextProviders[0]?.id ?? null)
               : state.activeProviderId,
           };
         });
@@ -273,9 +259,7 @@ export const useProviderStore = create<ProviderState>()(
         const normalized = migrateState(persistedState);
         return {
           ...currentState,
-          providers: hydrateProviders(
-            normalized.providers as PersistedProviderConfig[],
-          ),
+          providers: hydrateProviders(normalized.providers as PersistedProviderConfig[]),
           activeProviderId: normalized.activeProviderId,
           onboardingComplete: normalized.onboardingComplete,
         };

@@ -120,9 +120,7 @@ function NotificationItem({ notification, onNavigate, onMarkRead }: Notification
       onClick={handleClick}
       type="button"
     >
-      <Icon
-        className={cn("mt-0.5 size-4 shrink-0", NOTIFICATION_ICON_COLORS[notification.type])}
-      />
+      <Icon className={cn("mt-0.5 size-4 shrink-0", NOTIFICATION_ICON_COLORS[notification.type])} />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p
           className={cn(
