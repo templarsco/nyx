@@ -14,25 +14,25 @@ export type TeammateId = typeof TeammateId.Type;
 /**
  * Notification types emitted by agents or the system.
  */
-export const NotificationType = Schema.Literal(
+export const NotificationType = Schema.Literals([
   "input_needed",
   "warning",
   "error",
   "completed",
   "info",
-);
+]);
 export type NotificationType = typeof NotificationType.Type;
 
 /**
  * Ring visual state for sidebar thread indicators.
  */
-export const RingState = Schema.Literal("input", "warning", "completed");
+export const RingState = Schema.Literals(["input", "warning", "completed"]);
 export type RingState = typeof RingState.Type;
 
 /**
  * Notification mode: full (rings + toasts + panel) or simple (rings + badge).
  */
-export const NotificationMode = Schema.Literal("full", "simple");
+export const NotificationMode = Schema.Literals(["full", "simple"]);
 export type NotificationMode = typeof NotificationMode.Type;
 
 /**
@@ -54,14 +54,14 @@ export type Notification = typeof Notification.Type;
  * WebSocket push message for notifications.
  */
 export const NotificationPushMessage = Schema.Struct({
-  channel: Schema.Literal("notification.push"),
+  channel: Schema.Literals(["notification.push"]),
   payload: Schema.Struct({
     id: NotificationId,
     agentId: Schema.NullOr(TeammateId),
     threadId: Schema.NullOr(ThreadId),
     type: NotificationType,
     message: Schema.String,
-    priority: Schema.Literal("low", "normal", "high"),
+    priority: Schema.Literals(["low", "normal", "high"]),
   }),
 });
 export type NotificationPushMessage = typeof NotificationPushMessage.Type;
