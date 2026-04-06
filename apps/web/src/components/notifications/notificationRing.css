@@ -1,0 +1,58 @@
+/**
+ * Pulsing ring animations for sidebar thread items.
+ *
+ * Applied via .nyx-ring-input / .nyx-ring-warning / .nyx-ring-completed
+ * classes on thread list items to indicate notification state.
+ *
+ * - input   (blue):   agent needs user input
+ * - warning (yellow): something requires attention
+ * - completed (green): task finished (brief pulse, then fades)
+ */
+
+@keyframes nyx-ring-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--nyx-ring-color);
+  }
+  50% {
+    box-shadow: 0 0 0 3px var(--nyx-ring-color);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--nyx-ring-color);
+  }
+}
+
+@keyframes nyx-ring-completed-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--nyx-ring-color);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 3px var(--nyx-ring-color);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--nyx-ring-color);
+    opacity: 0;
+  }
+}
+
+.nyx-ring-input {
+  --nyx-ring-color: var(--color-blue-500, #3b82f6);
+  position: relative;
+  border-radius: var(--radius-lg, 0.625rem);
+  animation: nyx-ring-pulse 2s ease-in-out infinite;
+}
+
+.nyx-ring-warning {
+  --nyx-ring-color: var(--color-amber-500, #f59e0b);
+  position: relative;
+  border-radius: var(--radius-lg, 0.625rem);
+  animation: nyx-ring-pulse 2s ease-in-out infinite;
+}
+
+.nyx-ring-completed {
+  --nyx-ring-color: var(--color-emerald-500, #10b981);
+  position: relative;
+  border-radius: var(--radius-lg, 0.625rem);
+  animation: nyx-ring-completed-pulse 2s ease-in-out forwards;
+}
